@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id String @id @default(cuid())         // ID único generado automáticamente
+
+  name      String                       // Nombre del usuario
+  email     String    @unique            // Correo único
+  password  String                       // Contraseña encriptada
+  rol       Rol       @default(OBSERVER) // Rol del usuario (por defecto: OBSERVER)
+  
+  phone     String?                      // Teléfono opcional
+  isActive  Boolean   @default(true)     // Indica si el usuario está activo
+  lastLogin DateTime?                    // Fecha y hora del último inicio de sesión
+
+  createdById String?                    // ID del usuario que lo creó
+  createdAt DateTime @default(now())     // Fecha de creación
+  updatedAt DateTime @updatedAt          // Fecha de última actualización automática
+}
+
+enum Rol {
+  ADMINISTRATOR  // Tiene control total del sistema
+  RECORDER       // Puede registrar y editar información
+  OBSERVER       // Solo puede visualizar datos
+}
+
