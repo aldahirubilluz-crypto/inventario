@@ -27,7 +27,6 @@ const recentActivity = [
   { day: "Dom", entradas: 3, salidas: 2 },
 ];
 
-// === Componente StatCard ===
 interface StatCardProps {
   title: string;
   value: string | number;

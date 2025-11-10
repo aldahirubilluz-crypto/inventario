@@ -7,26 +7,86 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario {
-  id String @id @default(cuid())         // ID único generado automáticamente
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  rol           Rol       @default(OBSERVER)
+  phone         String?
+  isActive      Boolean   @default(true)
+  lastLogin     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  name      String                       // Nombre del usuario
-  email     String    @unique            // Correo único
-  password  String                       // Contraseña encriptada
-  rol       Rol       @default(OBSERVER) // Rol del usuario (por defecto: OBSERVER)
-  
-  phone     String?                      // Teléfono opcional
-  isActive  Boolean   @default(true)     // Indica si el usuario está activo
-  lastLogin DateTime?                    // Fecha y hora del último inicio de sesión
+  accounts            Account[]
+  sessions            Session[]
+  passwordResetTokens PasswordResetToken[]
 
-  createdById String?                    // ID del usuario que lo creó
-  createdAt DateTime @default(now())     // Fecha de creación
-  updatedAt DateTime @updatedAt          // Fecha de última actualización automática
+  @@map("usuarios")
 }
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model PasswordResetToken {
+  id           String   @id @default(cuid())
+  userId       String
+  email        String
+  token        String
+  code         String
+  expires      DateTime
+  lastSentAt   BigInt?
+  createdAt    DateTime @default(now())
+
+  isUsed       Boolean  @default(false)
+  isValidated  Boolean  @default(false)
+  usedAt       DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 
 enum Rol {
-  ADMINISTRATOR  // Tiene control total del sistema
-  RECORDER       // Puede registrar y editar información
-  OBSERVER       // Solo puede visualizar datos
+  ADMIN
+  MANAGER
+  OBSERVER
 }
-
