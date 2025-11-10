@@ -26,14 +26,12 @@ export async function generateResetToken(
   userId: string,
   checkOnly: boolean = false
 ) {
-  // Buscar el registro más reciente para el email
   const lastToken = await prisma.passwordResetToken.findFirst({
     where: { email },
     orderBy: { createdAt: "desc" },
   });
 
-  // Verificar si hay un cooldown activo
-  const cooldownSeconds = 60 * 1000; // 60 segundos
+  const cooldownSeconds = 60 * 1000;
   if (lastToken && lastToken.lastSentAt) {
     const now = Date.now();
     const timeSinceLastSent = now - Number(lastToken.lastSentAt);
@@ -53,7 +51,6 @@ export async function generateResetToken(
     return { cooldownRemaining: 0 };
   }
 
-  // Eliminar tokens anteriores para el usuario
   await prisma.passwordResetToken.deleteMany({
     where: { userId },
   });
@@ -98,17 +95,16 @@ export async function generateResetToken(
 
 export async function validateResetCode(email: string, code: string) {
   try {
-    // 1. Buscar el token por email + código + no expirado
     const resetToken = await prisma.passwordResetToken.findFirst({
       where: {
         email,
         code,
         expires: {
-          gt: new Date(), // que NO esté expirado
+          gt: new Date(),
         },
       },
       orderBy: {
-        createdAt: "desc", // el más reciente
+        createdAt: "desc",
       },
     });
 
@@ -116,7 +112,6 @@ export async function validateResetCode(email: string, code: string) {
       return { error: "Código inválido, ya utilizado o expirado" };
     }
 
-    // 2. Verificar que el JWT original siga siendo válido
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
       throw new Error(
@@ -131,16 +126,12 @@ export async function validateResetCode(email: string, code: string) {
       return { error: "Token inválido o expirado" };
     }
 
-    // 3. Generar un NUEVO token para cambiar contraseña (30 min)
     const newToken = jwt.sign(
       { userId: resetToken.userId, email, type: "password_reset_final" },
       jwtSecret,
       { expiresIn: "30m" }
     );
 
-    const newExpires = addMinutes(new Date(), 30);
-
-    // 4. Actualizar el registro: marcar como usado (usamos un truco con expires en el pasado)
     await prisma.passwordResetToken.update({
       where: { id: resetToken.id },
       data: {
@@ -148,14 +139,13 @@ export async function validateResetCode(email: string, code: string) {
       },
     });
 
-    // Opcional: invalidar todos los demás códigos del usuario
     await prisma.passwordResetToken.updateMany({
       where: {
         userId: resetToken.userId,
         id: { not: resetToken.id },
       },
       data: {
-        expires: new Date(0), // expirados
+        expires: new Date(0),
       },
     });
 
@@ -213,4 +203,37 @@ export async function updatePasswordWithToken(
   });
 
   return { success: true };
+}
+
+export async function updatePasswordById(
+  userId: string,
+  currentPassword: string,
+  newPassword: string
+) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user || !user.password) {
+      return { success: false, error: "Usuario no encontrado" };
+    }
+
+    const isValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isValid) {
+      return { success: false, error: "Contraseña actual incorrecta" };
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 12);
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashed },
+    });
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating password:", error);
+    return { success: false, error: "Error del servidor" };
+  }
 }
