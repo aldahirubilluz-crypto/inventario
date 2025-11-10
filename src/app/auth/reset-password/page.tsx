@@ -31,7 +31,7 @@ function ResetPasswordContent() {
       {/* Sección derecha: diseño visual */}
       <div className="hidden lg:flex w-1/2 bg-linear-to-br from-primary/90 to-primary/60 text-white items-center justify-center relative overflow-hidden">
         {/* Capa de diseño decorativo */}
-        <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-10 bg-cover bg-center"></div>
+        <div className="absolute inset-0 opacity-10 bg-cover bg-center"></div>
 
         <div className="relative z-10 text-center max-w-md p-10">
           <div className="flex justify-center mb-6">
