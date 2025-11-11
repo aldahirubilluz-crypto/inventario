@@ -93,7 +93,7 @@ enum Rol {
 model Asset {
   id Int @id @default(autoincrement())
 
-  oldLabel            String // pre etiqueta
+  oldLabel            String   @unique // pre etiqueta
   patrimonialCode     String   @unique // codigo_patrimonial
   description         String // descripcion
   purchaseOrder       String // nro_orden

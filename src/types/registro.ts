@@ -34,23 +34,34 @@ export const step3Schema = z.object({
 });
 
 // Paso 4: Adquisición - Solución más simple
-export const step4Schema = z.object({
-  purchaseOrder: z.string().min(1, "Nro. orden requerido"),
-  purchaseValue: z
-    .string()
-    .min(1, "Valor de compra requerido")
-    .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-      message: "Valor debe ser un número positivo",
+export const step4Schema = z
+  .object({
+    purchaseOrder: z.string().min(1, "Nro. orden requerido"),
+    purchaseValue: z
+      .string()
+      .min(1, "Valor de compra requerido")
+      .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+        message: "Valor debe ser un número positivo",
+      }),
+    purchaseDate: z.any().refine((val) => val instanceof Date, {
+      message: "Fecha de compra requerida",
     }),
-  purchaseDate: z.any().refine((val) => val instanceof Date, {
-    message: "Fecha de compra requerida",
-  }),
-  registrationDate: z.any().refine((val) => val instanceof Date, {
-    message: "Fecha de alta requerida",
-  }),
-  documentType: z.string().min(1, "Tipo de documento requerido"),
-  pecosaNumber: z.string().min(1, "Nro. PECOSA requerido"),
-});
+    registrationDate: z.any().refine((val) => val instanceof Date, {
+      message: "Fecha de alta requerida",
+    }),
+    documentType: z.string().min(1, "Tipo de documento requerido"),
+    pecosaNumber: z.string().min(1, "Nro. PECOSA requerido"),
+  })
+  .refine(
+    (data) => {
+      if (!data.purchaseDate || !data.registrationDate) return true;
+      return data.purchaseDate <= data.registrationDate;
+    },
+    {
+      message: "La Fecha de Compra no puede ser posterior a la Fecha de Alta",
+      path: ["purchaseDate"],
+    }
+  );
 
 // Schema completo
 export const assetSchema = step1Schema

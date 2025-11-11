@@ -4,33 +4,43 @@ import { prisma } from "@/config/prisma";
 import { AssetForm } from "@/types/registro";
 import { Prisma } from "@prisma/client";
 
+// Helper: convierte a MAYÚSCULAS y garantiza string
+const toUpper = (value: string | undefined): string =>
+  (value ?? "").toUpperCase();
+
 export async function createAsset(data: AssetForm) {
   try {
     const asset = await prisma.asset.create({
       data: {
-        oldLabel: data.oldLabel,
-        patrimonialCode: data.patrimonialCode,
-        description: data.description,
-        purchaseOrder: data.purchaseOrder,
+        oldLabel: toUpper(data.oldLabel),
+        patrimonialCode: toUpper(data.patrimonialCode),
+        description: toUpper(data.description),
+        purchaseOrder: toUpper(data.purchaseOrder),
         purchaseValue: new Prisma.Decimal(data.purchaseValue),
         purchaseDate: data.purchaseDate,
-        documentType: data.documentType,
-        pecosaNumber: data.pecosaNumber,
+        documentType: toUpper(data.documentType),
+        pecosaNumber: toUpper(data.pecosaNumber),
         registrationDate: data.registrationDate,
-        location: data.location,
-        costCenter: data.costCenter,
-        responsibleEmployee: data.responsibleEmployee,
-        finalEmployee: data.finalEmployee,
-        locationType: data.locationType,
-        locationSubtype: data.locationSubtype,
-        features: data.features || undefined,
-        model: data.model,
-        dimensions: data.dimensions,
-        serialNumber: data.serialNumber,
-        brand: data.brand,
-        chassisNumber: data.chassisNumber || undefined,
-        engineNumber: data.engineNumber || undefined,
-        licensePlate: data.licensePlate || undefined,
+        location: toUpper(data.location),
+        costCenter: toUpper(data.costCenter),
+        responsibleEmployee: toUpper(data.responsibleEmployee),
+        finalEmployee: toUpper(data.finalEmployee),
+        locationType: toUpper(data.locationType),
+        locationSubtype: toUpper(data.locationSubtype),
+        features: data.features ? toUpper(data.features) : undefined,
+        model: toUpper(data.model),
+        dimensions: toUpper(data.dimensions),
+        serialNumber: toUpper(data.serialNumber),
+        brand: toUpper(data.brand),
+        chassisNumber: data.chassisNumber
+          ? toUpper(data.chassisNumber)
+          : undefined,
+        engineNumber: data.engineNumber
+          ? toUpper(data.engineNumber)
+          : undefined,
+        licensePlate: data.licensePlate
+          ? toUpper(data.licensePlate)
+          : undefined,
       },
     });
 
@@ -38,8 +48,19 @@ export async function createAsset(data: AssetForm) {
       ...asset,
       purchaseValue: asset.purchaseValue.toString(),
     };
-  } catch (error) {
-    console.error("Error creating asset:", error);
-    throw new Error("No se pudo registrar el activo");
+  } catch (error: any) {
+    console.error("Error creando activo:", error);
+
+    if (error.code === "P2002") {
+      const target = error.meta?.target as string[] | undefined;
+      if (target?.includes("patrimonialCode")) {
+        throw new Error("Ya existe un activo con este Código Patrimonial.");
+      }
+      if (target?.includes("oldLabel")) {
+        throw new Error("Ya existe un activo con esta Pre-Etiqueta.");
+      }
+    }
+
+    throw new Error("No se pudo registrar el activo. Intenta nuevamente.");
   }
 }

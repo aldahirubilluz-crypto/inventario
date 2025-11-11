@@ -100,7 +100,7 @@ export default function Configuracion() {
     <div className="max-h-screen px-4">
       <div className="max-w-4xl mx-auto space-y-10">
         <Card className="overflow-hidden border-0 shadow-xl bg-card/95 backdrop-blur supports-backdrop-filter:bg-card/80 p-0">
-          <CardHeader className="bg-linear-to-r from-primary/10 to-primary/5 p-4">
+          <CardHeader className="bg-linear-to-r from-primary/10 to-destructive/5 p-4">
             <CardTitle className="text-2xl font-bold text-primary flex items-center gap-3">
               <div className="p-2 bg-primary/10 rounded-lg">
                 <User className="w-6 h-6" />
@@ -129,9 +129,9 @@ export default function Configuracion() {
         </Card>
 
         <Card className="overflow-hidden border-0 shadow-xl bg-card/95 backdrop-blur supports-backdrop-filter:bg-card/80 p-0">
-          <CardHeader className="bg-linear-to-r from-destructive/10 to-destructive/5 p-4">
+          <CardHeader className="bg-linear-to-r from-primary/10 to-destructive/5 p-4">
             <CardTitle className="text-2xl font-bold text-primary flex items-center gap-3">
-              <div className="p-2 bg-destructive/10 rounded-lg">
+              <div className="p-2 bg-primary/10 rounded-lg">
                 <Lock className="w-6 h-6" />
               </div>
               Seguridad

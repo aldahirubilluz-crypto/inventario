@@ -119,6 +119,9 @@ CREATE UNIQUE INDEX "verification_tokens_token_key" ON "verification_tokens"("to
 CREATE UNIQUE INDEX "verification_tokens_identifier_token_key" ON "verification_tokens"("identifier", "token");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "assets_oldLabel_key" ON "assets"("oldLabel");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "assets_patrimonialCode_key" ON "assets"("patrimonialCode");
 
 -- AddForeignKey

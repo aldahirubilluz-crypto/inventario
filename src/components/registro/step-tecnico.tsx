@@ -1,113 +1,173 @@
 import { Wrench } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Textarea } from "../ui/textarea";
 
 export default function StepTecnico({ register, errors }: any) {
   return (
-    <Card>
+    <Card className="border-0 shadow-sm gap-2">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Wrench className="h-5 w-5 text-primary" /> Técnico
+        <CardTitle className="flex items-center gap-2 text-lg font-semibold">
+          <Wrench className="h-5 w-5 text-primary" />
+          Técnico
         </CardTitle>
+        <CardDescription className="text-sm text-muted-foreground">
+          Especificaciones técnicas y características del activo
+        </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Marca *</Label>
+      <CardContent className="space-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="space-y-1.5">
+            <Label htmlFor="brand" className="text-sm font-medium">
+              Marca <span className="text-destructive">*</span>
+            </Label>
             <Input
-              placeholder="Ingrese la marca"
+              id="brand"
+              placeholder="Ej. 1234"
               {...register("brand")}
-              className={cn(errors.brand && "border-destructive")}
+              className={cn(
+                "h-11 text-sm placeholder:text-muted-foreground/70 transition-all duration-200",
+                "focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary",
+                errors.brand &&
+                  "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive"
+              )}
             />
             {errors.brand && (
-              <p className="text-sm text-destructive">
+              <p className="text-xs text-destructive mt-1 animate-in fade-in slide-in-from-top-1 duration-200">
                 {errors.brand.message?.toString()}
               </p>
             )}
           </div>
-          <div className="space-y-2">
-            <Label>Modelo *</Label>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="model" className="text-sm font-medium">
+              Modelo <span className="text-destructive">*</span>
+            </Label>
             <Input
-              placeholder="Ingrese el modelo"
+              id="model"
+              placeholder="Ej. H40-7"
               {...register("model")}
-              className={cn(errors.model && "border-destructive")}
+              className={cn(
+                "h-11 text-sm placeholder:text-muted-foreground/70 transition-all duration-200",
+                "focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary",
+                errors.model &&
+                  "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive"
+              )}
             />
             {errors.model && (
-              <p className="text-sm text-destructive">
+              <p className="text-xs text-destructive mt-1 animate-in fade-in slide-in-from-top-1 duration-200">
                 {errors.model.message?.toString()}
               </p>
             )}
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Nro. Serie *</Label>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="space-y-1.5">
+            <Label htmlFor="serialNumber" className="text-sm font-medium">
+              Nro. Serie <span className="text-destructive">*</span>
+            </Label>
             <Input
-              placeholder="Ingrese el número de serie"
+              id="serialNumber"
+              placeholder="Ej. SN123456789"
               {...register("serialNumber")}
-              className={cn(errors.serialNumber && "border-destructive")}
+              className={cn(
+                "h-11 text-sm placeholder:text-muted-foreground/70 transition-all duration-200",
+                "focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary",
+                errors.serialNumber &&
+                  "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive"
+              )}
             />
             {errors.serialNumber && (
-              <p className="text-sm text-destructive">
+              <p className="text-xs text-destructive mt-1 animate-in fade-in slide-in-from-top-1 duration-200">
                 {errors.serialNumber.message?.toString()}
               </p>
             )}
           </div>
-          <div className="space-y-2">
-            <Label>Medidas *</Label>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="dimensions" className="text-sm font-medium">
+              Medidas <span className="text-destructive">*</span>
+            </Label>
             <Input
-              placeholder="Ingrese las medidas"
+              id="dimensions"
+              placeholder="Ej. 50x30x20 cm"
               {...register("dimensions")}
-              className={cn(errors.dimensions && "border-destructive")}
+              className={cn(
+                "h-11 text-sm placeholder:text-muted-foreground/70 transition-all duration-200",
+                "focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary",
+                errors.dimensions &&
+                  "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive"
+              )}
             />
             {errors.dimensions && (
-              <p className="text-sm text-destructive">
+              <p className="text-xs text-destructive mt-1 animate-in fade-in slide-in-from-top-1 duration-200">
                 {errors.dimensions.message?.toString()}
               </p>
             )}
           </div>
         </div>
-        <div className="space-y-2">
-          <Label>Características</Label>
-          <Textarea
-            placeholder="Describa las características"
+
+        <div className="space-y-1.5">
+          <Label htmlFor="features" className="text-sm font-medium">
+            Características
+          </Label>
+          <Input
+            id="features"
+            placeholder="Ej. i7, 16GB RAM, 512GB SSD, pantalla táctil"
             {...register("features")}
-            rows={3}
-            className={cn(
-              "overflow-auto max-h-[100px] resize-y",
-              errors.description && "border-destructive"
-            )}
-            style={{ height: "auto" }}
-            onInput={(e) => {
-              const target = e.currentTarget;
-              target.style.height = "auto";
-              target.style.height = `${target.scrollHeight}px`;
-            }}
+            className="h-11 text-sm placeholder:text-muted-foreground/70 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary"
           />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <Label>Nro. Chasis</Label>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="space-y-1.5">
+            <Label htmlFor="chassisNumber" className="text-sm font-medium">
+              Nro. Chasis
+            </Label>
             <Input
-              placeholder="Ingrese número de chasis"
+              id="chassisNumber"
+              placeholder="Ej. 9BWZZZ1JZX1234567"
               {...register("chassisNumber")}
+              className="h-11 text-sm placeholder:text-muted-foreground/70 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary"
             />
           </div>
-          <div className="space-y-2">
-            <Label>Nro. Motor</Label>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="engineNumber" className="text-sm font-medium">
+              Nro. Motor
+            </Label>
             <Input
-              placeholder="Ingrese número de motor"
+              id="engineNumber"
+              placeholder="Ej. ABC123456"
               {...register("engineNumber")}
+              className="h-11 text-sm placeholder:text-muted-foreground/70 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary"
             />
           </div>
-          <div className="space-y-2">
-            <Label>Placa</Label>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="licensePlate" className="text-sm font-medium">
+              Placa
+            </Label>
             <Input
-              placeholder="Ingrese placa"
+              id="licensePlate"
+              placeholder="Ej. ABC-123"
               {...register("licensePlate")}
+              className={cn(
+                "h-11 text-sm placeholder:text-muted-foreground/70 transition-all duration-200 uppercase",
+                "focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary"
+              )}
+              onInput={(e: React.FormEvent<HTMLInputElement>) => {
+                const target = e.currentTarget;
+                target.value = target.value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
+              }}
             />
           </div>
         </div>

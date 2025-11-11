@@ -1,11 +1,12 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/sonner";
+import { SidebarProvider } from "@/components/ui/sidebar"; // ← AÑADIDO
 
-// Configuración de fuentes
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -18,20 +19,7 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Sistema de Inventario",
-    template: "%s | Sistema de Inventario",
-  },
-  description: "Plataforma para la gestión y control de inventarios.",
-  keywords: ["inventario", "gestión", "control", "stock"],
-  openGraph: {
-    title: "Sistema de Inventario",
-    description: "Gestión completa de inventarios en tiempo real",
-    type: "website",
-    locale: "es_ES",
-  },
-};
+export const metadata: Metadata = { /* ... tu metadata ... */ };
 
 export default function RootLayout({
   children,
@@ -53,12 +41,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <SessionProvider>
-            {children}
-            <Toaster
-              position="top-right"
-              richColors
-              closeButton
-            />
+            <SidebarProvider>   {/* ← ENVUELVE TODO */}
+              {children}
+              <Toaster position="top-right" richColors closeButton />
+            </SidebarProvider>
           </SessionProvider>
         </ThemeProvider>
       </body>
