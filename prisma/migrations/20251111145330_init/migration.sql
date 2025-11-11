@@ -71,6 +71,38 @@ CREATE TABLE "PasswordResetToken" (
     CONSTRAINT "PasswordResetToken_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "assets" (
+    "id" SERIAL NOT NULL,
+    "oldLabel" TEXT NOT NULL,
+    "patrimonialCode" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "purchaseOrder" TEXT NOT NULL,
+    "purchaseValue" DECIMAL(12,2) NOT NULL,
+    "purchaseDate" TIMESTAMP(3) NOT NULL,
+    "documentType" TEXT NOT NULL,
+    "pecosaNumber" TEXT NOT NULL,
+    "registrationDate" TIMESTAMP(3) NOT NULL,
+    "location" TEXT NOT NULL,
+    "costCenter" TEXT NOT NULL,
+    "responsibleEmployee" TEXT NOT NULL,
+    "finalEmployee" TEXT NOT NULL,
+    "locationType" TEXT NOT NULL,
+    "locationSubtype" TEXT NOT NULL,
+    "features" TEXT,
+    "model" TEXT NOT NULL,
+    "dimensions" TEXT NOT NULL,
+    "serialNumber" TEXT NOT NULL,
+    "brand" TEXT NOT NULL,
+    "chassisNumber" TEXT,
+    "engineNumber" TEXT,
+    "licensePlate" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "assets_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "usuarios_email_key" ON "usuarios"("email");
 
@@ -85,6 +117,9 @@ CREATE UNIQUE INDEX "verification_tokens_token_key" ON "verification_tokens"("to
 
 -- CreateIndex
 CREATE UNIQUE INDEX "verification_tokens_identifier_token_key" ON "verification_tokens"("identifier", "token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "assets_patrimonialCode_key" ON "assets"("patrimonialCode");
 
 -- AddForeignKey
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_fkey" FOREIGN KEY ("userId") REFERENCES "usuarios"("id") ON DELETE CASCADE ON UPDATE CASCADE;
