@@ -10,9 +10,9 @@ import (
 type Rol string
 
 const (
-	Admin    Rol = "ADMIN"
-	Manager  Rol = "MANAGER"
-	Observer Rol = "OBSERVER"
+	RolAdmin    Rol = "ADMIN" // ✅ Prefijo "Rol" para evitar conflictos
+	RolManager  Rol = "MANAGER"
+	RolObserver Rol = "OBSERVER"
 )
 
 // ======= BASE =======
@@ -25,18 +25,18 @@ type Base struct {
 
 // ======= USER =======
 type User struct {
-	ID                 string              `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	Name               *string             `gorm:"type:varchar(100)"`
-	Email              string              `gorm:"uniqueIndex;not null"`
-	EmailVerified      *time.Time
-	Image              *string
-	Password           *string
-	Rol                Rol                 `gorm:"type:varchar(20);default:'OBSERVER'"`
-	Phone              *string
-	IsActive           bool                `gorm:"default:true"`
-	LastLogin          *time.Time
-	CreatedAt          time.Time           `gorm:"autoCreateTime"`
-	UpdatedAt          time.Time           `gorm:"autoUpdateTime"`
+	ID            string  `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	Name          *string `gorm:"type:varchar(100)"`
+	Email         string  `gorm:"uniqueIndex;not null"`
+	EmailVerified *time.Time
+	Image         *string
+	Password      *string
+	Rol           Rol `gorm:"type:varchar(20);default:'OBSERVER'"`
+	Phone         *string
+	IsActive      bool `gorm:"default:true"`
+	LastLogin     *time.Time
+	CreatedAt     time.Time `gorm:"autoCreateTime"`
+	UpdatedAt     time.Time `gorm:"autoUpdateTime"`
 
 	Accounts            []Account
 	Sessions            []Session
@@ -45,8 +45,8 @@ type User struct {
 
 // ======= ACCOUNT =======
 type Account struct {
-	ID                string  `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	UserID            string  `gorm:"type:uuid;not null"`
+	ID                string `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	UserID            string `gorm:"type:uuid;not null"`
 	Type              string
 	Provider          string
 	ProviderAccountID string
@@ -63,32 +63,32 @@ type Account struct {
 
 // ======= SESSION =======
 type Session struct {
-	ID           string    `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	SessionToken string    `gorm:"uniqueIndex;not null"`
-	UserID       string    `gorm:"type:uuid;not null"`
+	ID           string `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	SessionToken string `gorm:"uniqueIndex;not null"`
+	UserID       string `gorm:"type:uuid;not null"`
 	Expires      time.Time
 	User         User `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
 }
 
 // ======= VERIFICATION TOKEN =======
 type VerificationToken struct {
-	Identifier string    `gorm:"not null"`
-	Token      string    `gorm:"uniqueIndex;not null"`
+	Identifier string `gorm:"not null"`
+	Token      string `gorm:"uniqueIndex;not null"`
 	Expires    time.Time
 }
 
 // ======= PASSWORD RESET TOKEN =======
 type PasswordResetToken struct {
-	ID          string     `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	UserID      string     `gorm:"type:uuid;not null"`
+	ID          string `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	UserID      string `gorm:"type:uuid;not null"`
 	Email       string
 	Token       string
 	Code        string
 	Expires     time.Time
 	LastSentAt  *int64
-	CreatedAt   time.Time  `gorm:"autoCreateTime"`
-	IsUsed      bool       `gorm:"default:false"`
-	IsValidated bool       `gorm:"default:false"`
+	CreatedAt   time.Time `gorm:"autoCreateTime"`
+	IsUsed      bool      `gorm:"default:false"`
+	IsValidated bool      `gorm:"default:false"`
 	UsedAt      *time.Time
 
 	User User `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
@@ -96,12 +96,12 @@ type PasswordResetToken struct {
 
 // ======= ASSET =======
 type Asset struct {
-	ID                  uint      `gorm:"primaryKey;autoIncrement"`
-	OldLabel            string    `gorm:"uniqueIndex"`
-	PatrimonialCode     string    `gorm:"uniqueIndex"`
+	ID                  uint   `gorm:"primaryKey;autoIncrement"`
+	OldLabel            string `gorm:"uniqueIndex"`
+	PatrimonialCode     string `gorm:"uniqueIndex"`
 	Description         string
 	PurchaseOrder       string
-	PurchaseValue       float64   `gorm:"type:decimal(12,2)"`
+	PurchaseValue       float64 `gorm:"type:decimal(12,2)"`
 	PurchaseDate        time.Time
 	DocumentType        string
 	PecosaNumber        string

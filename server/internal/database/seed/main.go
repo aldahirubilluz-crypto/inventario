@@ -1,3 +1,4 @@
+// server/internal/database/seed/main.go
 package seed
 
 import (
@@ -9,6 +10,7 @@ import (
 
 	"gorm.io/gorm"
 	"server/internal/models"
+	"server/pkgs/security"
 )
 
 type SeedUser struct {
@@ -34,7 +36,6 @@ func SeedAll(db *gorm.DB) error {
 }
 
 func seedUsers(db *gorm.DB) error {
-	// Detectar ruta absoluta del archivo user.json
 	execPath, _ := os.Getwd()
 	filePath := filepath.Join(execPath, "internal", "database", "seed", "user.json")
 
@@ -48,15 +49,23 @@ func seedUsers(db *gorm.DB) error {
 		return fmt.Errorf("error al parsear user.json: %w", err)
 	}
 
+	argon := security.NewArgon2Service()
+
 	for _, u := range users {
+		hashedPassword, err := argon.HashPassword(u.Password)
+		if err != nil {
+			return fmt.Errorf("error al encriptar la contraseña de %s: %w", u.Email, err)
+		}
+
 		user := models.User{
 			Name:          &u.Name,
 			Email:         u.Email,
-			Password:      &u.Password,
-			Rol:           models.Rol(u.Rol),
+			Password:      ptrString(hashedPassword),
+			Rol:           models.Rol(u.Rol), // ✅ Esto funcionará con "ADMIN"
 			IsActive:      true,
 			EmailVerified: ptrTime(time.Now()),
 		}
+
 		if err := db.Create(&user).Error; err != nil {
 			return fmt.Errorf("error al crear usuario %s: %w", u.Email, err)
 		}
@@ -68,4 +77,8 @@ func seedUsers(db *gorm.DB) error {
 
 func ptrTime(t time.Time) *time.Time {
 	return &t
+}
+
+func ptrString(s string) *string {
+	return &s
 }

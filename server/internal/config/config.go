@@ -1,18 +1,11 @@
 package config
 
 import (
-	"database/sql"
-	"fmt"
-	"log"
 	"os"
 	"sync"
-
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-
-	_ "github.com/lib/pq"
 )
 
+// AppConfig contiene toda la configuración del entorno.
 type AppConfig struct {
 	ServerPort string
 	DBHost     string
@@ -26,9 +19,9 @@ type AppConfig struct {
 var (
 	cfg  *AppConfig
 	once sync.Once
-	DB   *gorm.DB
 )
 
+// LoadConfig inicializa la configuración una sola vez (patrón singleton).
 func LoadConfig() {
 	once.Do(func() {
 		cfg = &AppConfig{
@@ -43,6 +36,7 @@ func LoadConfig() {
 	})
 }
 
+// GetConfig devuelve la configuración actual cargada.
 func GetConfig() *AppConfig {
 	if cfg == nil {
 		LoadConfig()
@@ -50,32 +44,7 @@ func GetConfig() *AppConfig {
 	return cfg
 }
 
-func ConnectDB() error {
-	c := GetConfig()
-	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=America/Lima",
-		c.DBHost, c.DBUser, c.DBPassword, c.DBName, c.DBPort, c.DBSSLMode,
-	)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		return fmt.Errorf("error conectando a la base de datos: %w", err)
-	}
-	DB = db
-	log.Println("✅ Conexión a la base de datos establecida correctamente")
-	return nil
-}
-
-func SqlConnect(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", dsn)
-	if err != nil {
-		return nil, err
-	}
-	if err := db.Ping(); err != nil {
-		return nil, err
-	}
-	return db, nil
-}
-
+// getEnv obtiene una variable de entorno o retorna un valor por defecto.
 func getEnv(key, defaultValue string) string {
 	if val, ok := os.LookupEnv(key); ok {
 		return val

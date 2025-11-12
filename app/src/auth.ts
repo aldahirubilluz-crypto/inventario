@@ -1,112 +1,128 @@
-// src/auth.ts
-import NextAuth from "next-auth"
-import Credentials from "next-auth/providers/credentials"
-import Google from "next-auth/providers/google"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import bcrypt from "bcryptjs"
-import { prisma } from "./config/prisma"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import NextAuth from "next-auth";
+import authConfig from "./auth.config";
+
+const API_BASE = process.env.API_BASE_URL!;
+
+async function postJSON(url: string, body: unknown) {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  let data: any = null;
+  try {
+    data = await res.json();
+  } catch {}
+  return { ok: res.ok, status: res.status, data };
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    Credentials({
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null
+  ...authConfig,
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            password: true,
-            rol: true,
-            isActive: true,
-          },
-        })
-
-        if (!user || !user.password || !user.isActive) return null
-
-        const isValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        )
-
-        if (!isValid) return null
-
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { lastLogin: new Date() },
-        })
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.rol,
-        }
-      },
-    }),
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      allowDangerousEmailAccountLinking: true,
-    }),
-  ],
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider === "credentials") return true
-
-      if (account?.provider === "google" && user.email) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: user.email },
-          select: { id: true, isActive: true },
-        })
-
-        if (!dbUser || !dbUser.isActive) return false
-
-        await prisma.user.update({
-          where: { id: dbUser.id },
-          data: { lastLogin: new Date() },
-        })
-
-        return true
+    async jwt({ token, user, account, profile }) {
+      // ✅ Login con credenciales - el usuario ya viene del authorize()
+      if (account?.provider === "credentials" && user) {
+        token.id = (user as any).id;
+        token.email = (user as any).email;
+        token.name = (user as any).name;
+        token.image = (user as any).image;
+        (token as any).role = (user as any).role ?? "OBSERVER";
+        return token;
       }
 
-      return true
-    },
-    jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-        token.role = (user as any).role
-      }
-      return token
-    },
-    async session({ session, token }) {
-      if (session.user && token.id) {
-        session.user.id = token.id as string
-        session.user.role = token.role as "ADMIN" | "MANAGER" | "OBSERVER"
+      // ✅ Login con Google
+      if (account?.provider === "google" && profile) {
+        const email = (profile as any)?.email;
+        const name = (profile as any)?.name;
+        const image = (profile as any)?.picture;
 
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { rol: true, isActive: true },
-        })
+        if (!email) {
+          throw new Error("No se pudo obtener el email de Google");
+        }
 
-        if (dbUser) {
-          session.user.role = dbUser.rol
+        try {
+          // 1. Intentar registrar (puede fallar con 409 si ya existe)
+          const signupRes = await postJSON(`${API_BASE}/auth/signup`, {
+            email,
+            name,
+            image,
+            provider: "google",
+          });
+
+          // Si falla y NO es porque ya existe (409), lanzar error
+          if (!signupRes.ok && signupRes.status !== 409) {
+            console.error("Error en signup:", signupRes.data);
+            throw new Error("Error registrando usuario Google");
+          }
+
+          // 2. Hacer signin (siempre, exista o no)
+          const signinRes = await postJSON(`${API_BASE}/auth/signin`, {
+            email,
+            provider: "google",
+          });
+
+          if (!signinRes.ok) {
+            console.error("Error en signin:", signinRes.data);
+            throw new Error("Error iniciando sesión con Google");
+          }
+
+          // ✅ Extraer los datos correctamente (backend retorna { status, message, data })
+          const userData = signinRes.data?.data;
+
+          if (!userData?.id) {
+            throw new Error("Respuesta inválida del servidor");
+          }
+
+          token.id = userData.id;
+          token.email = userData.email;
+          token.name = userData.name;
+          token.image = userData.image;
+          (token as any).role = userData.role ?? "OBSERVER";
+        } catch (error) {
+          console.error("Error en autenticación Google:", error);
+          throw error;
         }
       }
-      return session
+
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        (session.user as any).id = token.id;
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.image = (token as any).image ?? null;
+        (session.user as any).role = (token as any).role ?? "OBSERVER";
+      }
+      return session;
+    },
+
+    authorized: async ({ auth }) => !!auth,
+  },
+
+  cookies: {
+    sessionToken: {
+      name: "inventario_session_token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+    csrfToken: {
+      name: "inventario_csrf_token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
     },
   },
-  pages: {
-    signIn: "/",
-    error: "/auth/error",
-  },
-  session: { strategy: "jwt" },
-  secret: process.env.AUTH_SECRET,
-})
+
+  secret: process.env.NEXTAUTH_SECRET,
+});

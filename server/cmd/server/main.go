@@ -1,3 +1,4 @@
+// server/cmd/server/main.go
 package main
 
 import (
@@ -65,6 +66,17 @@ func main() {
 
 	// Registrar rutas
 	routes.RegisterRoutes(app)
+
+	// ✅ AGREGAR ESTO: Imprimir rutas registradas
+	logger.Log.Info("📋 Rutas registradas:")
+	allRoutes := app.GetRoutes()
+	if len(allRoutes) == 0 {
+		logger.Log.Error("⚠️  NO SE REGISTRÓ NINGUNA RUTA")
+	} else {
+		for _, route := range allRoutes {
+			logger.Log.Infof("  %s %s", route.Method, route.Path)
+		}
+	}
 
 	// Puerto
 	port := config.GetConfig().ServerPort
