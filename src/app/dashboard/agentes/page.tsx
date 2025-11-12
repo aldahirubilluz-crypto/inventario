@@ -113,7 +113,7 @@ export default function AgentesClient() {
       <div className="max-w-7xl mx-auto space-y-10">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-muted-foreground">
               Gestión de Usuario
             </h1>
             <p className="text-muted-foreground mt-2 text-lg">

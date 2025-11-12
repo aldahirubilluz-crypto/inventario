@@ -27,6 +27,7 @@ import {
   SidebarFooter,
   SidebarTrigger,
   SidebarRail,
+  useSidebar, // 👈 importado para detectar si está colapsado
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -38,6 +39,8 @@ export default function DashboardSidebar({
 }) {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
   const isAdmin = session?.user?.role === "ADMIN";
 
   const menuItems = [
@@ -52,21 +55,25 @@ export default function DashboardSidebar({
 
   const SidebarNavContent = () => (
     <>
-      <SidebarHeader className="flex flex-row items-center justify-between border-b border-border/40 bg-background/60 backdrop-blur-md p-5">
+      <SidebarHeader className="flex flex-row items-center justify-between border-b border-border/40 bg-sidebar p-2">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
-            <PackageOpen className="h-5 w-5 text-primary" />
+            <PackageOpen className="h-5 w-5 text-red-400" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight">Inventario</h1>
+          {!isCollapsed && (
+            <h1 className="text-xl font-bold tracking-tight">Inventario</h1>
+          )}
         </div>
-        <ThemeToggle />
+        {!isCollapsed && <ThemeToggle />}
       </SidebarHeader>
-      
+
       <SidebarContent className="px-3 py-4">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-            Navegación
-          </SidebarGroupLabel>
+          {!isCollapsed && (
+            <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Navegación
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => {
@@ -75,29 +82,24 @@ export default function DashboardSidebar({
 
                 return (
                   <SidebarMenuItem key={item.href}>
-                    <div>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={isActive}
-                        tooltip={item.name}
-                        className={`
-                          ${
-                            isActive
-                              ? "bg-primary/10 text-primary"
-                              : "hover:bg-muted/60"
-                          }
-                          rounded-lg px-3 py-2 transition-all duration-200
-                        `}
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      tooltip={isCollapsed ? item.name : undefined}
+                      className={`${
+                        isActive
+                          ? "bg-primary/10 text-primary"
+                          : "hover:bg-muted/60"
+                      } rounded-lg px-4 py-5 transition-all duration-200`}
+                    >
+                      <Link
+                        href={item.href}
+                        className="flex items-center gap-3"
                       >
-                        <Link
-                          href={item.href}
-                          className="flex items-center gap-3"
-                        >
-                          <Icon className="h-4 w-4" />
-                          <span>{item.name}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </div>
+                        <Icon className="h-4 w-4" />
+                        {!isCollapsed && <span>{item.name}</span>}
+                      </Link>
+                    </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
               })}
@@ -106,16 +108,18 @@ export default function DashboardSidebar({
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-border/40 bg-background/60 backdrop-blur-md p-4">
+      <SidebarFooter className="border-t border-border/40 bg-sidebar backdrop-blur-md p-1">
         <SidebarMenu>
           <SidebarMenuItem>
             <Button
               variant="ghost"
-              className="w-full justify-start text-destructive hover:bg-destructive/10 transition-all duration-200"
+              className="w-full justify-start text-destructive bg-primary/80 hover:bg-destructive/80 transition-all duration-200"
               onClick={() => signOut({ callbackUrl: "/" })}
             >
-              <LogOut className="h-4 w-4" />
-              <span>Cerrar sesión</span>
+              <LogOut className="h-4 w-4 text-primary-foreground" />
+              {!isCollapsed && (
+                <span className="text-primary-foreground">Cerrar sesión</span>
+              )}
             </Button>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -124,25 +128,29 @@ export default function DashboardSidebar({
   );
 
   return (
-    <div className="flex min-h-screen w-full bg-linear-to-br from-background via-background/90 to-background/70">
-
+    <div className="flex min-h-screen w-full bg-background">
       <Sidebar
         collapsible="icon"
-        className="hidden lg:flex shadow-lg border-r border-border/40 bg-background/80 backdrop-blur-lg"
+        className="hidden sm:flex shadow-lg border-r border-border/40 bg-background/80 backdrop-blur-lg"
       >
         <SidebarNavContent />
         <SidebarRail />
       </Sidebar>
 
       <Sheet>
-        <div className="fixed right-4 top-4 z-50 lg:hidden">
+        <div className="fixed top-0 left-0 right-0 z-50 flex h-14 items-center justify-between bg-linear-to-b from-primary/20 to-primary/5 backdrop-blur-xl px-4 shadow-md lg:hidden rounded-b-2xl border-b border-primary/10">
+          <span className="text-sm font-semibold text-foreground/90 tracking-tight">
+            Sistema de inventario
+          </span>
+
           <SidebarTrigger>
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon"
-              className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-md shadow-md border border-border/40"
+              className="h-10 w-10 rounded-full bg-background/90 backdrop-blur-xl shadow-lg border border-primary/20 text-primary-foreground/80 transition-all duration-300 hover:scale-105 hover:bg-primary/10 hover:text-primary-foreground hover:shadow-xl hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             >
               <Menu className="h-5 w-5" />
+              <span className="sr-only">Abrir menú</span>
             </Button>
           </SidebarTrigger>
         </div>

@@ -10,7 +10,7 @@ export default async function AgentesLayout({
   const session = await auth();
 
   if (session?.user?.role !== "ADMIN") {
-    redirect("/dashboard纺织");
+    redirect("/dashboard");
   }
 
   return <>{children}</>;

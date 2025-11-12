@@ -86,14 +86,14 @@ export function ManagerForm({ manager, onSave, onCancel }: ManagerFormProps) {
           Nombre completo
         </Label>
         <div className="relative">
-          <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+          <User className="absolute left-3 top-3 h-5 w-5 text-black/80" />
           <Input
             id="name"
             name="name"
-            placeholder="Ej. Aldahir Ubilluz"
+            placeholder="Ej. Juan Perez"
             value={formData.name}
             onChange={handleChange}
-            className="pl-10 h-11 rounded-xl border-input bg-background focus-visible:ring-primary"
+            className="pl-10 h-11 rounded-xl border-input bg-white focus-visible:ring-primary text-black/80"
             required
           />
         </div>
@@ -104,7 +104,7 @@ export function ManagerForm({ manager, onSave, onCancel }: ManagerFormProps) {
           Correo electrónico
         </Label>
         <div className="relative">
-          <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+          <Mail className="absolute left-3 top-3 h-5 w-5 text-black/80" />
           <Input
             id="email"
             name="email"
@@ -112,7 +112,7 @@ export function ManagerForm({ manager, onSave, onCancel }: ManagerFormProps) {
             placeholder="usuario@empresa.com"
             value={formData.email}
             onChange={handleChange}
-            className="pl-10 h-11 rounded-xl border-input bg-background focus-visible:ring-primary"
+            className="pl-10 h-11 rounded-xl border-input bg-white focus-visible:ring-primary text-black/80"
             required
           />
         </div>
@@ -123,7 +123,7 @@ export function ManagerForm({ manager, onSave, onCancel }: ManagerFormProps) {
           Teléfono (opcional)
         </Label>
         <div className="relative">
-          <Phone className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+          <Phone className="absolute left-3 top-3 h-5 w-5 text-black/80" />
           <Input
             id="phone"
             name="phone"
@@ -131,7 +131,7 @@ export function ManagerForm({ manager, onSave, onCancel }: ManagerFormProps) {
             placeholder="987 654 321"
             value={formData.phone}
             onChange={handleChange}
-            className="pl-10 h-11 rounded-xl border-input bg-background focus-visible:ring-primary"
+            className="pl-10 h-11 rounded-xl border-input bg-white focus-visible:ring-primary text-black/80"
           />
         </div>
       </div>
@@ -142,7 +142,7 @@ export function ManagerForm({ manager, onSave, onCancel }: ManagerFormProps) {
             Contraseña
           </Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+            <Lock className="absolute left-3 top-3 h-5 w-5 text-black/80" />
             <Input
               id="password"
               name="password"
@@ -150,7 +150,7 @@ export function ManagerForm({ manager, onSave, onCancel }: ManagerFormProps) {
               placeholder="••••••••"
               value={formData.password}
               onChange={handleChange}
-              className="pl-10 pr-12 h-11 rounded-xl border-input bg-background focus-visible:ring-primary"
+              className="pl-10 pr-12 h-11 rounded-xl border-input bg-white focus-visible:ring-primary text-black/80"
               required
             />
             <button
@@ -158,7 +158,11 @@ export function ManagerForm({ manager, onSave, onCancel }: ManagerFormProps) {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition"
             >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              {showPassword ? (
+                <EyeOff className="h-5 w-5 text-black/80" />
+              ) : (
+                <Eye className="h-5 w-5 text-black/80" />
+              )}
             </button>
           </div>
         </div>

@@ -40,7 +40,7 @@ export default function RightLogin() {
 
   return (
     <div className="flex flex-1 justify-center sm:items-center p-4 sm:p-8">
-      <Card className="w-full max-w-md border-0 shadow-2xl sm:rounded-3xl bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/90 overflow-hidden">
+      <Card className="w-full max-w-md border-0 shadow-2xl sm:rounded-3xl bg-white">
         <CardHeader className="space-y-1 pb-8 pt-10 px-8">
           <div className="flex justify-end">
             <ThemeToggle />
@@ -48,16 +48,16 @@ export default function RightLogin() {
           <CardTitle className="text-center text-4xl font-bold bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">
             Bienvenido
           </CardTitle>
-          <p className="text-center text-sm text-muted-foreground mt-2">
+          <p className="text-center text-sm text-black/50 mt-2">
             Ingresa tus credenciales para continuar
           </p>
         </CardHeader>
 
         <CardContent className="px-8 pb-10 space-y-6">
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Correo */}
+
             <div>
-              <label className="text-sm font-semibold flex items-center gap-2 mb-2">
+              <label className="text-sm font-semibold flex items-center gap-2 mb-2 text-black/80">
                 <Mail size={16} className="text-amber-600" />
                 Correo electrónico
               </label>
@@ -66,13 +66,12 @@ export default function RightLogin() {
                 type="email"
                 required
                 placeholder="admin@demo.com"
-                className="h-12"
+                className="h-12 text-black"
               />
             </div>
 
-            {/* Contraseña */}
             <div>
-              <label className="text-sm font-semibold flex items-center gap-2 mb-2">
+              <label className="text-sm font-semibold flex items-center gap-2 mb-2 text-black/80">
                 <Lock size={16} className="text-amber-600" />
                 Contraseña
               </label>
@@ -82,12 +81,12 @@ export default function RightLogin() {
                   type={showPassword ? "text" : "password"}
                   required
                   placeholder="••••••••"
-                  className="h-12 pr-10"
+                  className="h-12 pr-10 text-black"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-primary transition-colors"
+                  className="absolute inset-y-0 right-3 flex items-center text-black/40 hover:text-primary transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -121,7 +120,7 @@ export default function RightLogin() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-white px-3 text-muted-foreground">O</span>
+              <span className="bg-white px-3 text-black/80">O</span>
             </div>
           </div>
 
@@ -129,7 +128,7 @@ export default function RightLogin() {
           <Button
             variant="outline"
             onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-            className="w-full h-12"
+            className="w-full h-12 bg-white dark:bg-white text-black/80 hover:bg-red-50 cursor-pointer"
           >
             <img
               src="/icons/google-icon.svg"

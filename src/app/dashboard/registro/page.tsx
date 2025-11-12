@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -271,7 +272,7 @@ export default function AssetWizardForm() {
         description={`¿Estás seguro de registrar el activo con código patrimonial "${
           pendingData?.patrimonialCode || ""
         }"?`}
-        styleButton="bg-primary hover:bg-primary/90 text-white"
+        styleButton="bg-primary hover:bg-primary/60 text-white"
       />
     </>
   );

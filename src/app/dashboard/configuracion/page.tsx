@@ -99,11 +99,11 @@ export default function Configuracion() {
   return (
     <div className="max-h-screen px-4">
       <div className="max-w-4xl mx-auto space-y-10">
-        <Card className="overflow-hidden border-0 shadow-xl bg-card/95 backdrop-blur supports-backdrop-filter:bg-card/80 p-0">
-          <CardHeader className="bg-linear-to-r from-primary/10 to-destructive/5 p-4">
-            <CardTitle className="text-2xl font-bold text-primary flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <User className="w-6 h-6" />
+        <Card className="overflow-hidden border-0 shadow-xl bg-card supports-backdrop-filter:bg-card/80 p-0">
+          <CardHeader className="bg-primary p-4">
+            <CardTitle className="text-2xl font-bold text-primary-foreground flex items-center gap-3">
+              <div className="p-2 bg-primary-foreground rounded-lg">
+                <User className="w-6 h-6 text-primary" />
               </div>
               Datos Personales
             </CardTitle>
@@ -111,14 +111,18 @@ export default function Configuracion() {
           <CardContent className="py-4">
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label className="text-foreground/80">Nombre completo</Label>
+                <Label className="text-popover-foreground">
+                  Nombre completo
+                </Label>
                 <div className="flex items-center gap-3 text-foreground">
                   <User className="w-5 h-5 text-muted-foreground" />
                   <p className="font-medium">{user?.name || "—"}</p>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-foreground/80">Correo electrónico</Label>
+                <Label className="text-popover-foreground">
+                  Correo electrónico
+                </Label>
                 <div className="flex items-center gap-3 text-foreground">
                   <Mail className="w-5 h-5 text-muted-foreground" />
                   <p className="font-medium">{user?.email || "—"}</p>
@@ -128,11 +132,11 @@ export default function Configuracion() {
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden border-0 shadow-xl bg-card/95 backdrop-blur supports-backdrop-filter:bg-card/80 p-0">
-          <CardHeader className="bg-linear-to-r from-primary/10 to-destructive/5 p-4">
-            <CardTitle className="text-2xl font-bold text-primary flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Lock className="w-6 h-6" />
+        <Card className="overflow-hidden border-0 shadow-xl bg-card supports-backdrop-filter:bg-card/80 p-0">
+          <CardHeader className="bg-primary p-4">
+            <CardTitle className="text-2xl font-bold text-primary-foreground flex items-center gap-3">
+              <div className="p-2 bg-primary-foreground rounded-lg">
+                <Lock className="w-6 h-6 text-primary" />
               </div>
               Seguridad
             </CardTitle>

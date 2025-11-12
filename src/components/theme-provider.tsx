@@ -28,7 +28,7 @@ export const ThemeToggle = () => {
   if (!mounted) return null;
 
   return (
-    <button onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} className="hover:bg-mantle p-2 rounded-full text-maroon hover:text-red transition-all">
+    <button onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} className="hover:bg-mantle p-2 rounded-full text-black/80 dark:text-white hover:text-red-400 transition-all">
       {resolvedTheme === "dark" ? <Sun size={18} className="rounded-full" /> : <Moon size={18} className="rounded-full" />}
     </button>
   );

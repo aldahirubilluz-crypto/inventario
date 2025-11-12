@@ -46,7 +46,9 @@ export default function ForgotPasswordPage() {
 
       toast.success("¡Código enviado! Revisa tu correo");
       router.push(
-        `/auth/verify?email=${encodeURIComponent(email)}&token=${resetData.token}`
+        `/auth/verify?email=${encodeURIComponent(email)}&token=${
+          resetData.token
+        }`
       );
     } catch (error) {
       console.error("Error:", error);
@@ -57,15 +59,13 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-background via-background to-muted/30 dark:from-background dark:to-muted/50 px-4 sm:px-6 lg:px-8">
-      {/* Fondo decorativo animado (solo desktop) */}
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-background via-background to-muted/30 dark:from-background dark:to-muted/50 px-4 sm:px-6 lg:px-8 w-full">
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none hidden lg:block">
         <div className="absolute top-0 -left-40 w-96 h-96 bg-primary/20 rounded-full filter blur-3xl animate-pulse" />
         <div className="absolute bottom-0 -right-40 w-96 h-96 bg-primary/10 rounded-full filter blur-3xl animate-pulse animation-delay-4000" />
       </div>
 
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-        {/* Formulario */}
         <div className="flex flex-col justify-center">
           <Card className="border-0 shadow-2xl bg-card/95 backdrop-blur-xl">
             <CardContent className="p-8 sm:p-10">
@@ -77,13 +77,17 @@ export default function ForgotPasswordPage() {
                   ¿Olvidaste tu contraseña?
                 </h1>
                 <p className="mt-3 text-muted-foreground">
-                  Ingresa tu correo y te enviaremos un código de recuperación seguro.
+                  Ingresa tu correo y te enviaremos un código de recuperación
+                  seguro.
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-foreground font-medium">
+                  <Label
+                    htmlFor="email"
+                    className="text-foreground font-medium"
+                  >
                     Correo electrónico
                   </Label>
                   <div className="relative">
@@ -129,12 +133,14 @@ export default function ForgotPasswordPage() {
           </Card>
         </div>
 
-        {/* Panel decorativo derecho (solo lg+) */}
         <div className="hidden lg:flex flex-col justify-center text-center">
           <div className="bg-linear-to-br from-primary to-primary/80 rounded-3xl shadow-2xl p-12 text-primary-foreground">
-            <h2 className="text-4xl font-bold mb-6">Recupera tu cuenta al instante</h2>
+            <h2 className="text-4xl font-bold mb-6">
+              Recupera tu cuenta al instante
+            </h2>
             <p className="text-lg opacity-90 leading-relaxed mb-10">
-              En menos de 30 segundos tendrás acceso nuevamente.<br />
+              En menos de 30 segundos tendrás acceso nuevamente.
+              <br />
               Solo necesitas tu correo electrónico.
             </p>
 
