@@ -35,5 +35,6 @@ declare module "next-auth/jwt" {
     email: string
     name: string | null
     image: string | null
+    error?: "NoEmail" | "UserNotFound" | "AuthError"
   }
 }

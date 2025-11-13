@@ -1,3 +1,4 @@
+// src/components/dashboard-sidebar.tsx
 "use client";
 
 import {
@@ -9,6 +10,7 @@ import {
   Settings,
   LogOut,
   Menu,
+  FileText,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -27,33 +29,95 @@ import {
   SidebarFooter,
   SidebarTrigger,
   SidebarRail,
-  useSidebar, // 👈 importado para detectar si está colapsado
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Session } from "next-auth";
 
-export default function DashboardSidebar({
-  children,
+type UserRole = "ADMIN" | "MANAGER" | "EMPLOYEE";
+type Office = "OTIC" | "PATRIMONIO" | "ABASTECIMIENTO";
+
+interface MenuItem {
+  name: string;
+  icon: typeof Home;
+  href: string;
+  allowedRoles: UserRole[];
+  allowedOffices?: Office[];
+}
+
+const hasAccess = (
+  item: MenuItem,
+  userRole: UserRole | undefined,
+  userOffice: Office | null | undefined
+): boolean => {
+  if (!userRole) return false;
+
+  if (!item.allowedRoles.includes(userRole)) return false;
+
+  if (!item.allowedOffices || item.allowedOffices.length === 0) return true;
+
+  if (!userOffice) return false;
+
+  return item.allowedOffices.includes(userOffice);
+};
+
+const allMenuItems: MenuItem[] = [
+  {
+    name: "Inicio",
+    icon: Home,
+    href: "/dashboard",
+    allowedRoles: ["ADMIN", "MANAGER", "EMPLOYEE"],
+  },
+  {
+    name: "Agentes",
+    icon: UserPen,
+    href: "/dashboard/agentes",
+    allowedRoles: ["ADMIN", "MANAGER"],
+  },
+  {
+    name: "Registro",
+    icon: Users,
+    href: "/dashboard/registro",
+    allowedRoles: ["ADMIN", "MANAGER", "EMPLOYEE"],
+    allowedOffices: ["OTIC", "PATRIMONIO"],
+  },
+  {
+    name: "Almacén",
+    icon: Box,
+    href: "/dashboard/almacen",
+    allowedRoles: ["ADMIN", "MANAGER", "EMPLOYEE"],
+    allowedOffices: ["OTIC", "PATRIMONIO"],
+  },
+  {
+    name: "Documentos",
+    icon: FileText,
+    href: "/dashboard/documentos",
+    allowedRoles: ["ADMIN", "MANAGER", "EMPLOYEE"],
+    allowedOffices: ["OTIC", "PATRIMONIO"],
+  },
+  {
+    name: "Configuración",
+    icon: Settings,
+    href: "/dashboard/configuracion",
+    allowedRoles: ["ADMIN", "MANAGER", "EMPLOYEE"],
+    allowedOffices: ["OTIC", "ABASTECIMIENTO"],
+  },
+];
+
+// ✅ Mover el componente fuera del render
+function SidebarNavContent({
+  menuItems,
+  pathname,
+  isCollapsed,
+  session,
 }: {
-  children: React.ReactNode;
+  menuItems: MenuItem[];
+  pathname: string;
+  isCollapsed: boolean;
+  session: Session | null;
 }) {
-  const pathname = usePathname();
-  const { data: session } = useSession();
-  const { state } = useSidebar();
-  const isCollapsed = state === "collapsed";
-  const isAdmin = session?.user?.role === "ADMIN";
-
-  const menuItems = [
-    { name: "Inicio", icon: Home, href: "/dashboard" },
-    ...(isAdmin
-      ? [{ name: "Agentes", icon: UserPen, href: "/dashboard/agentes" }]
-      : []),
-    { name: "Registro", icon: Users, href: "/dashboard/registro" },
-    { name: "Almacén", icon: Box, href: "/dashboard/almacen" },
-    { name: "Configuración", icon: Settings, href: "/dashboard/configuracion" },
-  ];
-
-  const SidebarNavContent = () => (
+  return (
     <>
       <SidebarHeader className="flex flex-row items-center justify-between border-b border-border/40 bg-sidebar p-2">
         <div className="flex items-center gap-3">
@@ -106,6 +170,22 @@ export default function DashboardSidebar({
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {!isCollapsed && session?.user && (
+          <div className="mt-auto px-4 py-3 border-t border-border/40">
+            <div className="text-xs text-muted-foreground space-y-1">
+              <p>
+                <span className="font-semibold">Rol:</span> {session.user.role}
+              </p>
+              {session.user.office && (
+                <p>
+                  <span className="font-semibold">Oficina:</span>{" "}
+                  {session.user.office}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
       </SidebarContent>
 
       <SidebarFooter className="border-t border-border/40 bg-sidebar backdrop-blur-md p-1">
@@ -126,6 +206,24 @@ export default function DashboardSidebar({
       </SidebarFooter>
     </>
   );
+}
+
+export default function DashboardSidebar({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+
+  const userRole = session?.user?.role;
+  const userOffice = session?.user?.office;
+
+  const menuItems = allMenuItems.filter((item) =>
+    hasAccess(item, userRole, userOffice)
+  );
 
   return (
     <div className="flex min-h-screen w-full bg-background">
@@ -133,7 +231,12 @@ export default function DashboardSidebar({
         collapsible="icon"
         className="hidden sm:flex shadow-lg border-r border-border/40 bg-background/80 backdrop-blur-lg"
       >
-        <SidebarNavContent />
+        <SidebarNavContent
+          menuItems={menuItems}
+          pathname={pathname}
+          isCollapsed={isCollapsed}
+          session={session}
+        />
         <SidebarRail />
       </Sidebar>
 
@@ -160,7 +263,12 @@ export default function DashboardSidebar({
           className="w-72 p-0 bg-background/95 backdrop-blur-xl"
         >
           <Sidebar collapsible="none">
-            <SidebarNavContent />
+            <SidebarNavContent
+              menuItems={menuItems}
+              pathname={pathname}
+              isCollapsed={false}
+              session={session}
+            />
           </Sidebar>
         </SheetContent>
       </Sheet>

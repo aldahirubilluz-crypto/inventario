@@ -44,6 +44,7 @@ var (
 	ErrSignupPasswordOrProviderNeeded = errors.New("password or provider is required")
 	ErrSignupProviderInvalid          = errors.New("provider is invalid")
 	ErrSignupEmailTaken               = errors.New("email is already in use")
+	ErrGoogleSignupNotAllowed         = errors.New("google signup is not allowed, user must be created by admin")
 )
 
 var emailRxSignin = regexp.MustCompile(`^[^\s@]+@[^\s@]+\.[^\s@]+$`)
@@ -131,6 +132,11 @@ func (s *authServiceImpl) Signup(req dto.SignupRequest) (*dto.AuthResponse, erro
 		return nil, ErrSignupEmailInvalid
 	}
 
+	// ✅ NO PERMITIR SIGNUP CON GOOGLE
+	if req.Provider == "google" {
+		return nil, ErrGoogleSignupNotAllowed
+	}
+
 	var existingUser models.User
 	if err := s.db.Where("email = ?", req.Email).First(&existingUser).Error; err == nil {
 		return nil, ErrSignupEmailTaken
@@ -148,18 +154,15 @@ func (s *authServiceImpl) Signup(req dto.SignupRequest) (*dto.AuthResponse, erro
 		UpdatedAt:     now,
 	}
 
-	if req.Provider == "google" {
-		user.Password = nil
-	} else {
-		if req.Password == "" {
-			return nil, ErrSignupPasswordOrProviderNeeded
-		}
-		hashedPassword, err := s.argon.HashPassword(req.Password)
-		if err != nil {
-			return nil, err
-		}
-		user.Password = &hashedPassword
+	// Solo permitir signup con credenciales
+	if req.Password == "" {
+		return nil, ErrSignupPasswordOrProviderNeeded
 	}
+	hashedPassword, err := s.argon.HashPassword(req.Password)
+	if err != nil {
+		return nil, err
+	}
+	user.Password = &hashedPassword
 
 	if err := s.db.Create(&user).Error; err != nil {
 		return nil, err

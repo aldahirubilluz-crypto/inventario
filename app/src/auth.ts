@@ -1,15 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 //app/src/auth.ts
 import NextAuth from "next-auth"
 import authConfig from "./auth.config"
 
 const API_BASE = process.env.API_BASE_URL!
-
-interface SignupRequest {
-  email: string
-  name?: string | null
-  image?: string | null
-  provider: "google"
-}
 
 interface SigninRequest {
   email: string
@@ -71,33 +65,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Login con Google
       if (account?.provider === "google" && profile) {
         const email = profile.email
-        const name = profile.name ?? null
-        const image = (profile.picture as string | undefined) ?? null
 
         if (!email) {
-          throw new Error("No se pudo obtener el email de Google")
+          console.error("❌ No se pudo obtener email de Google")
+          // ✅ Marcar token como inválido
+          token.error = "NoEmail"
+          return token
         }
 
         try {
-          // 1. Intentar registrar
-          const signupRequest: SignupRequest = {
-            email,
-            name,
-            image,
-            provider: "google",
-          }
-
-          const signupResponse = await postJSON<AuthResponse>(
-            `${API_BASE}/auth/signup`,
-            signupRequest
-          )
-
-          // Si falla y NO es 409, lanzar error
-          if (!signupResponse.data && signupResponse.status !== 409) {
-            throw new Error("Error registrando usuario Google")
-          }
-
-          // 2. Hacer signin
           const signinRequest: SigninRequest = {
             email,
             password: "",
@@ -110,7 +86,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           )
 
           if (!signinResponse.data) {
-            throw new Error("Error iniciando sesión con Google")
+            console.error("❌ Usuario no encontrado:", email)
+            // ✅ Marcar token como inválido
+            token.error = "UserNotFound"
+            return token
           }
 
           const userData = signinResponse.data
@@ -121,9 +100,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.image = userData.image
           token.role = userData.role
           token.office = userData.office
+          
+          console.log("✅ Login Google exitoso:", email)
         } catch (error) {
-          console.error("Error en autenticación Google:", error)
-          throw error
+          console.error("❌ Error en autenticación Google:", error)
+          // ✅ Marcar token como inválido
+          token.error = "AuthError"
+          return token
         }
       }
 
@@ -131,18 +114,48 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
 
     async session({ session, token }) {
-      if (session.user) {
+      // ✅ Si hay error en el token, no crear sesión válida
+      if ("error" in token) {
+        console.error("❌ Token con error, rechazando sesión:", token.error)
+        // Retornar sesión inválida
+        return {
+          ...session,
+          user: undefined,
+        } as any
+      }
+
+      // ✅ Solo crear sesión si el token tiene ID (usuario válido)
+      if (token.id && session.user) {
         session.user.id = token.id
         session.user.name = token.name
         session.user.email = token.email
         session.user.image = token.image
         session.user.role = token.role
         session.user.office = token.office
+        return session
       }
-      return session
+
+      // Si no hay ID, sesión inválida
+      return {
+        ...session,
+        user: undefined,
+      } as any
     },
 
-    authorized: async ({ auth }) => !!auth,
+    // ✅ Verificar que la sesión tenga usuario válido
+    async authorized({ auth }) {
+      // Si no hay auth o no hay user, denegar
+      if (!auth || !auth.user) {
+        return false
+      }
+      
+      // Si no tiene rol, denegar
+      if (!auth.user.role) {
+        return false
+      }
+      
+      return true
+    },
   },
 
   cookies: {
@@ -167,4 +180,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
 
   secret: process.env.NEXTAUTH_SECRET,
+  
+  pages: {
+    signIn: "/",
+    error: "/",
+  },
 })

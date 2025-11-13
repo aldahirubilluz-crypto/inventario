@@ -55,32 +55,37 @@ const authConfig: NextAuthConfig = {
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email y contraseña requeridos")
-        }
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error("Email y contraseña requeridos")
+          }
 
-        const request: SigninRequest = {
-          email: credentials.email as string,
-          password: credentials.password as string,
-          provider: "credentials",
-        }
+          const request: SigninRequest = {
+            email: credentials.email as string,
+            password: credentials.password as string,
+            provider: "credentials",
+          }
 
-        const response = await postJSON<AuthResponse>(
-          `${API_BASE}/auth/signin`,
-          request
-        )
+          const response = await postJSON<AuthResponse>(
+            `${API_BASE}/auth/signin`,
+            request
+          )
 
-        if (!response.data) {
-          throw new Error(response.message || "Credenciales inválidas")
-        }
+          if (!response.data) {
+            throw new Error(response.message || "Credenciales inválidas")
+          }
 
-        return {
-          id: response.data.id,
-          email: response.data.email,
-          name: response.data.name,
-          image: response.data.image,
-          role: response.data.role,
-          office: response.data.office,
+          return {
+            id: response.data.id,
+            email: response.data.email,
+            name: response.data.name,
+            image: response.data.image,
+            role: response.data.role,
+            office: response.data.office,
+          }
+        } catch (error) {
+          console.error("❌ Error en authorize:", error)
+          return null // ✅ Retornar null en lugar de throw
         }
       },
     }),
@@ -94,8 +99,8 @@ const authConfig: NextAuthConfig = {
 
   session: {
     strategy: "jwt",
-    maxAge: 30 * 60, // 30 minutos
-    updateAge: 10 * 60, // 10 minutos
+    maxAge: 30 * 60,
+    updateAge: 10 * 60,
   },
 
   pages: { signIn: "/" },
