@@ -1,20 +1,55 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import NextAuth from "next-auth";
-import authConfig from "./auth.config";
+//app/src/auth.ts
+import NextAuth from "next-auth"
+import authConfig from "./auth.config"
 
-const API_BASE = process.env.API_BASE_URL!;
+const API_BASE = process.env.API_BASE_URL!
 
-async function postJSON(url: string, body: unknown) {
+interface SignupRequest {
+  email: string
+  name?: string | null
+  image?: string | null
+  provider: "google"
+}
+
+interface SigninRequest {
+  email: string
+  password: string
+  provider: "google"
+}
+
+interface AuthResponse {
+  id: string
+  email: string
+  name: string | null
+  image: string | null
+  role: "ADMIN" | "MANAGER" | "EMPLOYEE"
+  office: "OTIC" | "PATRIMONIO" | "ABASTECIMIENTO" | null
+}
+
+interface ApiResponse<T> {
+  status: number
+  message: string
+  data: T | null
+}
+
+async function postJSON<T>(
+  url: string,
+  body: unknown
+): Promise<ApiResponse<T>> {
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
-  });
-  let data: any = null;
+  })
+
+  let data: ApiResponse<T>
   try {
-    data = await res.json();
-  } catch {}
-  return { ok: res.ok, status: res.status, data };
+    data = await res.json()
+  } catch {
+    throw new Error("Failed to parse response")
+  }
+
+  return data
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -22,82 +57,89 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   callbacks: {
     async jwt({ token, user, account, profile }) {
-      // ✅ Login con credenciales - el usuario ya viene del authorize()
+      // Login con credenciales
       if (account?.provider === "credentials" && user) {
-        token.id = (user as any).id;
-        token.email = (user as any).email;
-        token.name = (user as any).name;
-        token.image = (user as any).image;
-        (token as any).role = (user as any).role ?? "OBSERVER";
-        return token;
+        token.id = user.id
+        token.email = user.email
+        token.name = user.name
+        token.image = user.image
+        token.role = user.role
+        token.office = user.office
+        return token
       }
 
-      // ✅ Login con Google
+      // Login con Google
       if (account?.provider === "google" && profile) {
-        const email = (profile as any)?.email;
-        const name = (profile as any)?.name;
-        const image = (profile as any)?.picture;
+        const email = profile.email
+        const name = profile.name ?? null
+        const image = (profile.picture as string | undefined) ?? null
 
         if (!email) {
-          throw new Error("No se pudo obtener el email de Google");
+          throw new Error("No se pudo obtener el email de Google")
         }
 
         try {
-          // 1. Intentar registrar (puede fallar con 409 si ya existe)
-          const signupRes = await postJSON(`${API_BASE}/auth/signup`, {
+          // 1. Intentar registrar
+          const signupRequest: SignupRequest = {
             email,
             name,
             image,
             provider: "google",
-          });
-
-          // Si falla y NO es porque ya existe (409), lanzar error
-          if (!signupRes.ok && signupRes.status !== 409) {
-            console.error("Error en signup:", signupRes.data);
-            throw new Error("Error registrando usuario Google");
           }
 
-          // 2. Hacer signin (siempre, exista o no)
-          const signinRes = await postJSON(`${API_BASE}/auth/signin`, {
+          const signupResponse = await postJSON<AuthResponse>(
+            `${API_BASE}/auth/signup`,
+            signupRequest
+          )
+
+          // Si falla y NO es 409, lanzar error
+          if (!signupResponse.data && signupResponse.status !== 409) {
+            throw new Error("Error registrando usuario Google")
+          }
+
+          // 2. Hacer signin
+          const signinRequest: SigninRequest = {
             email,
+            password: "",
             provider: "google",
-          });
-
-          if (!signinRes.ok) {
-            console.error("Error en signin:", signinRes.data);
-            throw new Error("Error iniciando sesión con Google");
           }
 
-          // ✅ Extraer los datos correctamente (backend retorna { status, message, data })
-          const userData = signinRes.data?.data;
+          const signinResponse = await postJSON<AuthResponse>(
+            `${API_BASE}/auth/signin`,
+            signinRequest
+          )
 
-          if (!userData?.id) {
-            throw new Error("Respuesta inválida del servidor");
+          if (!signinResponse.data) {
+            throw new Error("Error iniciando sesión con Google")
           }
 
-          token.id = userData.id;
-          token.email = userData.email;
-          token.name = userData.name;
-          token.image = userData.image;
-          (token as any).role = userData.role ?? "OBSERVER";
+          const userData = signinResponse.data
+
+          token.id = userData.id
+          token.email = userData.email
+          token.name = userData.name
+          token.image = userData.image
+          token.role = userData.role
+          token.office = userData.office
         } catch (error) {
-          console.error("Error en autenticación Google:", error);
-          throw error;
+          console.error("Error en autenticación Google:", error)
+          throw error
         }
       }
 
-      return token;
+      return token
     },
 
     async session({ session, token }) {
       if (session.user) {
-        (session.user as any).id = token.id;
-        session.user.name = token.name;
-        session.user.email = token.email;
-        session.user.image = (token as any).image ?? null;
-        (session.user as any).role = (token as any).role ?? "OBSERVER";
+        session.user.id = token.id
+        session.user.name = token.name
+        session.user.email = token.email
+        session.user.image = token.image
+        session.user.role = token.role
+        session.user.office = token.office
       }
-      return session;
+      return session
     },
 
     authorized: async ({ auth }) => !!auth,
@@ -125,4 +167,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-});
+})

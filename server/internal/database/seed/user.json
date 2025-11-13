@@ -1,9 +1,51 @@
-
 [
   {
-    "name": "Administrador",
+    "name": "Administrador Principal",
     "email": "admin@inventario.com",
     "password": "admin123",
-    "rol": "ADMIN"
+    "rol": "ADMIN",
+    "office": null
+  },
+  {
+    "name": "Manager OTIC",
+    "email": "manager.otic@inventario.com",
+    "password": "manager123",
+    "rol": "MANAGER",
+    "office": "OTIC"
+  },
+  {
+    "name": "Manager Patrimonio",
+    "email": "manager.patrimonio@inventario.com",
+    "password": "manager123",
+    "rol": "MANAGER",
+    "office": "PATRIMONIO"
+  },
+  {
+    "name": "Manager Abastecimiento",
+    "email": "manager.abastecimiento@inventario.com",
+    "password": "manager123",
+    "rol": "MANAGER",
+    "office": "ABASTECIMIENTO"
+  },
+  {
+    "name": "Empleado OTIC 1",
+    "email": "empleado.otic@inventario.com",
+    "password": "empleado123",
+    "rol": "EMPLOYEE",
+    "office": "OTIC"
+  },
+  {
+    "name": "Empleado Patrimonio 1",
+    "email": "empleado.patrimonio@inventario.com",
+    "password": "empleado123",
+    "rol": "EMPLOYEE",
+    "office": "PATRIMONIO"
+  },
+  {
+    "name": "Empleado Abastecimiento 1",
+    "email": "empleado.abastecimiento@inventario.com",
+    "password": "empleado123",
+    "rol": "EMPLOYEE",
+    "office": "ABASTECIMIENTO"
   }
 ]

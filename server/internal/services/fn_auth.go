@@ -50,7 +50,6 @@ var emailRxSignin = regexp.MustCompile(`^[^\s@]+@[^\s@]+\.[^\s@]+$`)
 
 // ===== Signin =====
 func (s *authServiceImpl) Signin(req dto.SigninRequest) (*dto.AuthResponse, error) {
-	// Validaciones básicas
 	if req.Email == "" {
 		return nil, ErrSigninEmailRequired
 	}
@@ -58,7 +57,6 @@ func (s *authServiceImpl) Signin(req dto.SigninRequest) (*dto.AuthResponse, erro
 		return nil, ErrSigninEmailInvalid
 	}
 
-	// Buscar usuario
 	var user models.User
 	if err := s.db.Where("email = ?", req.Email).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -67,27 +65,31 @@ func (s *authServiceImpl) Signin(req dto.SigninRequest) (*dto.AuthResponse, erro
 		return nil, err
 	}
 
-	// Verificar si está activo
 	if !user.IsActive {
 		return nil, ErrUserInactive
 	}
 
-	// Si es login con Google
 	if req.Provider == "google" {
 		now := time.Now()
 		user.LastLogin = &now
 		s.db.Save(&user)
 
+		var office *string
+		if user.Office != nil {
+			officeStr := string(*user.Office)
+			office = &officeStr
+		}
+
 		return &dto.AuthResponse{
-			ID:    user.ID,
-			Email: user.Email,
-			Name:  user.Name,
-			Image: user.Image,
-			Role:  string(user.Rol),
+			ID:     user.ID,
+			Email:  user.Email,
+			Name:   user.Name,
+			Image:  user.Image,
+			Role:   string(user.Rol),
+			Office: office,
 		}, nil
 	}
 
-	// Login con credenciales
 	if req.Password == "" {
 		return nil, ErrSigninPasswordRequired
 	}
@@ -96,28 +98,32 @@ func (s *authServiceImpl) Signin(req dto.SigninRequest) (*dto.AuthResponse, erro
 		return nil, ErrInvalidLoginMethod
 	}
 
-	// Verificar contraseña con Argon2
 	if err := s.argon.ComparePassword(*user.Password, req.Password); err != nil {
 		return nil, ErrInvalidCredentials
 	}
 
-	// Actualizar último login
 	now := time.Now()
 	user.LastLogin = &now
 	s.db.Save(&user)
 
+	var office *string
+	if user.Office != nil {
+		officeStr := string(*user.Office)
+		office = &officeStr
+	}
+
 	return &dto.AuthResponse{
-		ID:    user.ID,
-		Email: user.Email,
-		Name:  user.Name,
-		Image: user.Image,
-		Role:  string(user.Rol),
+		ID:     user.ID,
+		Email:  user.Email,
+		Name:   user.Name,
+		Image:  user.Image,
+		Role:   string(user.Rol),
+		Office: office,
 	}, nil
 }
 
 // ===== Signup =====
 func (s *authServiceImpl) Signup(req dto.SignupRequest) (*dto.AuthResponse, error) {
-	// Validaciones
 	if req.Email == "" {
 		return nil, ErrSignupEmailRequired
 	}
@@ -125,26 +131,23 @@ func (s *authServiceImpl) Signup(req dto.SignupRequest) (*dto.AuthResponse, erro
 		return nil, ErrSignupEmailInvalid
 	}
 
-	// Verificar que no exista
 	var existingUser models.User
 	if err := s.db.Where("email = ?", req.Email).First(&existingUser).Error; err == nil {
 		return nil, ErrSignupEmailTaken
 	}
 
-	// Crear usuario
 	now := time.Now()
 	user := models.User{
 		Email:         req.Email,
 		Name:          req.Name,
 		Image:         req.Image,
-		Rol:           models.RolObserver, // ✅ Usar constante correcta
+		Rol:           models.RolEmployee,
 		IsActive:      true,
 		EmailVerified: &now,
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}
 
-	// Google vs Credenciales
 	if req.Provider == "google" {
 		user.Password = nil
 	} else {
@@ -158,16 +161,22 @@ func (s *authServiceImpl) Signup(req dto.SignupRequest) (*dto.AuthResponse, erro
 		user.Password = &hashedPassword
 	}
 
-	// Guardar
 	if err := s.db.Create(&user).Error; err != nil {
 		return nil, err
 	}
 
+	var office *string
+	if user.Office != nil {
+		officeStr := string(*user.Office)
+		office = &officeStr
+	}
+
 	return &dto.AuthResponse{
-		ID:    user.ID,
-		Email: user.Email,
-		Name:  user.Name,
-		Image: user.Image,
-		Role:  string(user.Rol),
+		ID:     user.ID,
+		Email:  user.Email,
+		Name:   user.Name,
+		Image:  user.Image,
+		Role:   string(user.Rol),
+		Office: office,
 	}, nil
 }

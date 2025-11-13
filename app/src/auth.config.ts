@@ -1,21 +1,49 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+//app/src/auth.config.ts
 import Credentials from "next-auth/providers/credentials"
 import Google from "next-auth/providers/google"
 import type { NextAuthConfig } from "next-auth"
 
 const API_BASE = process.env.API_BASE_URL!
 
-async function postJSON(url: string, body: unknown) {
+interface SigninRequest {
+  email: string
+  password: string
+  provider: "credentials" | "google"
+}
+
+interface AuthResponse {
+  id: string
+  email: string
+  name: string | null
+  image: string | null
+  role: "ADMIN" | "MANAGER" | "EMPLOYEE"
+  office: "OTIC" | "PATRIMONIO" | "ABASTECIMIENTO" | null
+}
+
+interface ApiResponse<T> {
+  status: number
+  message: string
+  data: T | null
+}
+
+async function postJSON<T>(
+  url: string,
+  body: unknown
+): Promise<ApiResponse<T>> {
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   })
-  let data: any = null
+
+  let data: ApiResponse<T>
   try {
     data = await res.json()
-  } catch {}
-  return { ok: res.ok, status: res.status, data }
+  } catch {
+    throw new Error("Failed to parse response")
+  }
+
+  return data
 }
 
 const authConfig: NextAuthConfig = {
@@ -27,34 +55,33 @@ const authConfig: NextAuthConfig = {
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
-        if (!credentials?.email || !credentials?.password)
+        if (!credentials?.email || !credentials?.password) {
           throw new Error("Email y contraseña requeridos")
-
-        const res = await postJSON(`${API_BASE}/auth/signin`, {
-          email: credentials.email,
-          password: credentials.password,
-          provider: "credentials",
-        })
-
-        if (!res.ok) {
-          // res.data ya contiene { status, message, data }
-          throw new Error(res.data?.message || "Credenciales inválidas")
         }
 
-        // ✅ res.data contiene { status, message, data }
-        // Entonces res.data.data es el objeto de usuario
-        const userData = res.data?.data
-        if (!userData?.id) {
-          throw new Error("Respuesta inválida del servidor")
+        const request: SigninRequest = {
+          email: credentials.email as string,
+          password: credentials.password as string,
+          provider: "credentials",
+        }
+
+        const response = await postJSON<AuthResponse>(
+          `${API_BASE}/auth/signin`,
+          request
+        )
+
+        if (!response.data) {
+          throw new Error(response.message || "Credenciales inválidas")
         }
 
         return {
-          id: userData.id,
-          email: userData.email,
-          name: userData.name,
-          image: userData.image,
-          role: userData.role,
-        } as any
+          id: response.data.id,
+          email: response.data.email,
+          name: response.data.name,
+          image: response.data.image,
+          role: response.data.role,
+          office: response.data.office,
+        }
       },
     }),
 
@@ -67,8 +94,8 @@ const authConfig: NextAuthConfig = {
 
   session: {
     strategy: "jwt",
-    maxAge: 30 * 60,
-    updateAge: 10 * 60,
+    maxAge: 30 * 60, // 30 minutos
+    updateAge: 10 * 60, // 10 minutos
   },
 
   pages: { signIn: "/" },

@@ -1,18 +1,56 @@
-// components/RightLogin.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-provider";
 import { toast } from "sonner";
+import Lottie from "lottie-react";
+
+interface LottieAnimation {
+  v: string;
+  fr: number;
+  ip: number;
+  op: number;
+  w: number;
+  h: number;
+  nm: string;
+  ddd: number;
+  assets: any[];
+  layers: any[];
+}
 
 export default function RightLogin() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [botAnimation, setBotAnimation] = useState<LottieAnimation | null>(null);
+  const [lottieLoading, setLottieLoading] = useState(true);
+
+  useEffect(() => {
+    const loadBot = async () => {
+      try {
+        const res = await fetch("/lottie/bot.json");
+        if (!res.ok) throw new Error("Failed to load bot");
+        const data: LottieAnimation = await res.json();
+        setBotAnimation(data);
+      } catch (err) {
+        console.error("Error loading bot:", err);
+      } finally {
+        setLottieLoading(false);
+      }
+    };
+    loadBot();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,26 +77,45 @@ export default function RightLogin() {
   };
 
   return (
-    <div className="flex flex-1 justify-center sm:items-center p-4 sm:p-8">
-      <Card className="w-full max-w-md border-0 shadow-2xl sm:rounded-3xl bg-white">
-        <CardHeader className="space-y-1 pb-8 pt-10 px-8">
+    <div className="flex w-full md:w-1/2 justify-center items-center p-4 md:p-6">
+      <Card className="w-full max-w-md border border-border/50 rounded-3xl shadow-xl bg-card">
+        <CardHeader className="space-y-6 pb-6 pt-8 px-6">
           <div className="flex justify-end">
             <ThemeToggle />
           </div>
-          <CardTitle className="text-center text-4xl font-bold bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-            Bienvenido
-          </CardTitle>
-          <p className="text-center text-sm text-black/50 mt-2">
-            Ingresa tus credenciales para continuar
-          </p>
+
+          <div className="sm:hidden flex justify-center -mt-3">
+            {lottieLoading ? (
+              <div className="w-20 h-20 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+            ) : botAnimation ? (
+              <div className="w-36 h-36 -mb-8 drop-shadow-lg">
+                <Lottie
+                  animationData={botAnimation}
+                  loop
+                  autoplay
+                  className="w-full h-full"
+                />
+              </div>
+            ) : null}
+          </div>
+
+          {/* Theme Toggle */}
+
+          <div className="space-y-2 text-center">
+            <CardTitle className="text-3xl font-bold text-card-foreground">
+              Bienvenido
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Ingresa tus credenciales para continuar
+            </p>
+          </div>
         </CardHeader>
 
-        <CardContent className="px-8 pb-10 space-y-6">
+        <CardContent className="px-6 pb-8 space-y-6">
           <form onSubmit={handleSubmit} className="space-y-5">
-
-            <div>
-              <label className="text-sm font-semibold flex items-center gap-2 mb-2 text-black/80">
-                <Mail size={16} className="text-amber-600" />
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-medium text-card-foreground">
+                <Mail size={16} className="text-primary" />
                 Correo electrónico
               </label>
               <Input
@@ -66,13 +123,13 @@ export default function RightLogin() {
                 type="email"
                 required
                 placeholder="admin@demo.com"
-                className="h-12 text-black"
+                className="h-12 bg-muted/50 border-input text-card-foreground placeholder:text-muted-foreground/60 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0"
               />
             </div>
 
-            <div>
-              <label className="text-sm font-semibold flex items-center gap-2 mb-2 text-black/80">
-                <Lock size={16} className="text-amber-600" />
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-medium text-card-foreground">
+                <Lock size={16} className="text-primary" />
                 Contraseña
               </label>
               <div className="relative">
@@ -81,54 +138,51 @@ export default function RightLogin() {
                   type={showPassword ? "text" : "password"}
                   required
                   placeholder="••••••••"
-                  className="h-12 pr-10 text-black"
+                  className="h-12 pr-11 bg-muted/50 border-input text-card-foreground placeholder:text-muted-foreground/60 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-3 flex items-center text-black/40 hover:text-primary transition-colors"
+                  className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-primary transition-colors"
+                  aria-label={showPassword ? "Ocultar" : "Mostrar"}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
 
-              {/* Enlace de recuperar contraseña */}
-              <div className="flex justify-end mt-2">
+              <div className="flex justify-end">
                 <a
                   href="/auth/identify"
-                  className="text-sm text-primary hover:underline font-medium"
+                  className="text-sm font-medium text-primary hover:underline"
                 >
                   ¿Olvidaste tu contraseña?
                 </a>
               </div>
             </div>
 
-            {/* Botón iniciar sesión */}
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 font-semibold bg-primary hover:bg-primary/90"
+              className="w-full h-12 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 rounded-xl"
             >
               <LogIn size={18} className="mr-2" />
               {loading ? "Verificando..." : "Iniciar sesión"}
             </Button>
           </form>
 
-          {/* Separador */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+              <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-white px-3 text-black/80">O</span>
+              <span className="bg-card px-3 text-muted-foreground">O</span>
             </div>
           </div>
 
-          {/* Botón Google */}
           <Button
             variant="outline"
             onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-            className="w-full h-12 bg-white dark:bg-white text-black/80 hover:bg-red-50 cursor-pointer"
+            className="w-full h-12 border border-border hover:bg-accent/50 text-card-foreground rounded-xl transition-all"
           >
             <img
               src="/icons/google-icon.svg"

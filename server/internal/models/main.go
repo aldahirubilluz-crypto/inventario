@@ -6,13 +6,21 @@ import (
 	"gorm.io/gorm"
 )
 
-// ENUM
+// ======= ENUMS =======
 type Rol string
 
 const (
-	RolAdmin    Rol = "ADMIN" // ✅ Prefijo "Rol" para evitar conflictos
+	RolAdmin    Rol = "ADMIN"
 	RolManager  Rol = "MANAGER"
-	RolObserver Rol = "OBSERVER"
+	RolEmployee Rol = "EMPLOYEE" // ✅ Nuevo rol
+)
+
+type Office string
+
+const (
+	OfficeOTIC           Office = "OTIC"
+	OfficePatrimonio     Office = "PATRIMONIO"
+	OfficeAbastecimiento Office = "ABASTECIMIENTO"
 )
 
 // ======= BASE =======
@@ -31,17 +39,29 @@ type User struct {
 	EmailVerified *time.Time
 	Image         *string
 	Password      *string
-	Rol           Rol `gorm:"type:varchar(20);default:'OBSERVER'"`
+	Rol           Rol     `gorm:"type:varchar(20);default:'EMPLOYEE'"`
+	Office        *Office `gorm:"type:varchar(50)"`
 	Phone         *string
-	IsActive      bool `gorm:"default:true"`
+	IsActive      bool       `gorm:"default:true"`
 	LastLogin     *time.Time
-	CreatedAt     time.Time `gorm:"autoCreateTime"`
-	UpdatedAt     time.Time `gorm:"autoUpdateTime"`
+	LastIP        *string    `gorm:"type:varchar(50)"`   // ✅ Última IP usada
+	LastDevice    *string    `gorm:"type:varchar(255)"`  // ✅ Dispositivo o navegador
+	LastOS        *string    `gorm:"type:varchar(100)"`  // ✅ Sistema operativo
+	LastLocation  *string    `gorm:"type:varchar(255)"`  // ✅ Ubicación aproximada (opcional, requiere geolocalización por IP)
+	CreatedAt     time.Time  `gorm:"autoCreateTime"`
+	UpdatedAt     time.Time  `gorm:"autoUpdateTime"`
+
+	CreatedByID *string `gorm:"type:uuid"`
+	CreatedBy   *User   `gorm:"foreignKey:CreatedByID;constraint:OnDelete:SET NULL"`
 
 	Accounts            []Account
 	Sessions            []Session
 	PasswordResetTokens []PasswordResetToken
+
+	AssetsRegistered []Asset `gorm:"foreignKey:RegisteredByID"`
+	ManagedEmployees []User  `gorm:"foreignKey:CreatedByID"`
 }
+
 
 // ======= ACCOUNT =======
 type Account struct {
@@ -120,6 +140,10 @@ type Asset struct {
 	ChassisNumber       *string
 	EngineNumber        *string
 	LicensePlate        *string
-	CreatedAt           time.Time `gorm:"autoCreateTime"`
-	UpdatedAt           time.Time `gorm:"autoUpdateTime"`
+
+	RegisteredByID string `gorm:"type:uuid;not null"`
+	RegisteredBy   User   `gorm:"foreignKey:RegisteredByID;constraint:OnDelete:RESTRICT"`
+
+	CreatedAt time.Time `gorm:"autoCreateTime"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 }
