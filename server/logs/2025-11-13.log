@@ -1607,3 +1607,192 @@ time="2025-11-13T17:13:04-05:00" level=info msg="📥 Signin request received"
 time="2025-11-13T17:13:04-05:00" level=info msg="📧 Email: aldahir.ubilluz.27@unsch.edu.pe, Provider: google"
 time="2025-11-13T17:13:04-05:00" level=error msg="❌ Signin failed: google user not registered"
 time="2025-11-13T17:13:04-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=3.7052ms method=POST path=/auth/signin status=403 userAgent=node
+time="2025-11-13T17:16:18-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T17:16:18-05:00" level=info msg="📧 Email: aldahir.ubilluz.27@unsch.edu.pe, Provider: google"
+time="2025-11-13T17:16:19-05:00" level=error msg="❌ Signin failed: google user not registered"
+time="2025-11-13T17:16:19-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=35.3566ms method=POST path=/auth/signin status=403 userAgent=node
+time="2025-11-13T17:17:25-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T17:17:25-05:00" level=info msg="📧 Email: aldahir.ubilluz.27@unsch.edu.pe, Provider: google"
+time="2025-11-13T17:17:25-05:00" level=error msg="❌ Signin failed: google user not registered"
+time="2025-11-13T17:17:25-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=2.6695ms method=POST path=/auth/signin status=403 userAgent=node
+time="2025-11-13T17:18:18-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T17:18:18-05:00" level=info msg="📧 Email: kenedpalomino@gmail.com, Provider: credentials"
+time="2025-11-13T17:18:18-05:00" level=info msg="✅ Signin successful for kenedpalomino@gmail.com"
+time="2025-11-13T17:18:18-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=393.938ms method=POST path=/auth/signin status=200 userAgent=node
+time="2025-11-13T17:18:30-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T17:18:30-05:00" level=info msg="📧 Email: kenedpalomino@gmail.com, Provider: google"
+time="2025-11-13T17:18:30-05:00" level=info msg="✅ Signin successful for kenedpalomino@gmail.com"
+time="2025-11-13T17:18:30-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=11.5563ms method=POST path=/auth/signin status=200 userAgent=node
+time="2025-11-13T17:18:42-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T17:18:42-05:00" level=info msg="📧 Email: fasf@gmailc.om, Provider: credentials"
+time="2025-11-13T17:18:42-05:00" level=error msg="❌ Signin failed: user not found"
+time="2025-11-13T17:18:42-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=3.9777ms method=POST path=/auth/signin status=401 userAgent=node
+time="2025-11-13T17:21:28-05:00" level=info msg="🚀 Iniciando servidor..."
+time="2025-11-13T17:21:29-05:00" level=info msg="📦 La base de datos inventario ya existe"
+time="2025-11-13T17:21:37-05:00" level=info msg="🗑️ Tablas eliminadas correctamente"
+time="2025-11-13T17:21:37-05:00" level=info msg="✅ Tablas migradas correctamente"
+time="2025-11-13T17:21:37-05:00" level=info msg="🌱 Ejecutando seeding inicial (usuario admin)..."
+time="2025-11-13T17:21:39-05:00" level=info msg="✅ Seeding completo ✅"
+time="2025-11-13T17:21:39-05:00" level=info msg="📋 Rutas registradas:"
+time="2025-11-13T17:21:39-05:00" level=info msg="  GET /"
+time="2025-11-13T17:21:39-05:00" level=info msg="  GET /health"
+time="2025-11-13T17:21:39-05:00" level=info msg="  HEAD /"
+time="2025-11-13T17:21:39-05:00" level=info msg="  POST /"
+time="2025-11-13T17:21:39-05:00" level=info msg="  POST /auth/signin"
+time="2025-11-13T17:21:39-05:00" level=info msg="  POST /auth/signup"
+time="2025-11-13T17:21:39-05:00" level=info msg="  PUT /"
+time="2025-11-13T17:21:39-05:00" level=info msg="  DELETE /"
+time="2025-11-13T17:21:39-05:00" level=info msg="  CONNECT /"
+time="2025-11-13T17:21:39-05:00" level=info msg="  OPTIONS /"
+time="2025-11-13T17:21:39-05:00" level=info msg="  TRACE /"
+time="2025-11-13T17:21:39-05:00" level=info msg="  PATCH /"
+time="2025-11-13T17:21:39-05:00" level=info msg="✅ Servidor escuchando en http://localhost:8080"
+time="2025-11-13T17:43:42-05:00" level=info msg="🚀 Iniciando servidor..."
+time="2025-11-13T17:43:42-05:00" level=info msg="📦 La base de datos inventario ya existe"
+time="2025-11-13T17:43:45-05:00" level=info msg="🗑️ Tablas eliminadas correctamente"
+time="2025-11-13T17:43:45-05:00" level=info msg="✅ Tablas migradas correctamente"
+time="2025-11-13T17:43:45-05:00" level=info msg="🌱 Ejecutando seeding inicial (usuario admin)..."
+time="2025-11-13T17:43:46-05:00" level=info msg="✅ Seeding completo ✅"
+time="2025-11-13T17:43:46-05:00" level=info msg="📋 Rutas registradas:"
+time="2025-11-13T17:43:46-05:00" level=info msg="  GET /"
+time="2025-11-13T17:43:46-05:00" level=info msg="  GET /health"
+time="2025-11-13T17:43:46-05:00" level=info msg="  HEAD /"
+time="2025-11-13T17:43:46-05:00" level=info msg="  POST /"
+time="2025-11-13T17:43:46-05:00" level=info msg="  POST /auth/signin"
+time="2025-11-13T17:43:46-05:00" level=info msg="  POST /auth/signup"
+time="2025-11-13T17:43:46-05:00" level=info msg="  POST /auth/password-reset/request"
+time="2025-11-13T17:43:46-05:00" level=info msg="  POST /auth/password-reset/validate"
+time="2025-11-13T17:43:46-05:00" level=info msg="  POST /auth/password-reset/confirm"
+time="2025-11-13T17:43:46-05:00" level=info msg="  PUT /"
+time="2025-11-13T17:43:46-05:00" level=info msg="  DELETE /"
+time="2025-11-13T17:43:46-05:00" level=info msg="  CONNECT /"
+time="2025-11-13T17:43:46-05:00" level=info msg="  OPTIONS /"
+time="2025-11-13T17:43:46-05:00" level=info msg="  TRACE /"
+time="2025-11-13T17:43:46-05:00" level=info msg="  PATCH /"
+time="2025-11-13T17:43:46-05:00" level=info msg="✅ Servidor escuchando en http://localhost:8080"
+time="2025-11-13T17:45:46-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=14.2797ms method=POST path=/auth/password-reset/request status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T17:48:21-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=0s method=POST path=/auth/password-reset/confirm status=400 userAgent=insomnia/12.0.0
+time="2025-11-13T17:48:32-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=5.0996ms method=POST path=/auth/password-reset/request status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T17:48:35-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.8116ms method=POST path=/auth/password-reset/request status=429 userAgent=insomnia/12.0.0
+time="2025-11-13T17:48:41-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=2.1542ms method=POST path=/auth/password-reset/request status=429 userAgent=insomnia/12.0.0
+time="2025-11-13T17:48:48-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=0s method=POST path=/auth/password-reset/confirm status=400 userAgent=insomnia/12.0.0
+time="2025-11-13T17:48:49-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="742.5µs" method=POST path=/auth/password-reset/confirm status=400 userAgent=insomnia/12.0.0
+time="2025-11-13T17:48:54-05:00" level=error msg="Not Found" ip=127.0.0.1 latency=0s method=POST path=/auth/password-reset/reques status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T17:49:01-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.9438ms method=POST path=/auth/password-reset/request status=429 userAgent=insomnia/12.0.0
+time="2025-11-13T17:50:22-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=5.0854ms method=POST path=/auth/password-reset/request status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T17:50:33-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=0s method=POST path=/auth/password-reset/confirm status=400 userAgent=insomnia/12.0.0
+time="2025-11-13T17:51:56-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="241.8µs" method=POST path=/auth/password-reset/confirm status=400 userAgent=insomnia/12.0.0
+time="2025-11-13T17:53:15-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=10.2167ms method=POST path=/auth/password-reset/request status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T17:53:44-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=77.0093ms method=POST path=/auth/password-reset/validate status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T17:55:51-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=328.6912ms method=POST path=/auth/password-reset/confirm status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T17:57:41-05:00" level=info msg="🚀 Iniciando servidor..."
+time="2025-11-13T17:57:41-05:00" level=info msg="📦 La base de datos inventario ya existe"
+time="2025-11-13T17:57:52-05:00" level=info msg="✅ Tablas migradas correctamente"
+time="2025-11-13T17:57:52-05:00" level=info msg="📋 Rutas registradas:"
+time="2025-11-13T17:57:52-05:00" level=info msg="  GET /"
+time="2025-11-13T17:57:52-05:00" level=info msg="  GET /health"
+time="2025-11-13T17:57:52-05:00" level=info msg="  HEAD /"
+time="2025-11-13T17:57:52-05:00" level=info msg="  POST /"
+time="2025-11-13T17:57:52-05:00" level=info msg="  POST /auth/signin"
+time="2025-11-13T17:57:52-05:00" level=info msg="  POST /auth/signup"
+time="2025-11-13T17:57:52-05:00" level=info msg="  POST /auth/password-reset/request"
+time="2025-11-13T17:57:52-05:00" level=info msg="  POST /auth/password-reset/validate"
+time="2025-11-13T17:57:52-05:00" level=info msg="  POST /auth/password-reset/confirm"
+time="2025-11-13T17:57:52-05:00" level=info msg="  PUT /"
+time="2025-11-13T17:57:52-05:00" level=info msg="  DELETE /"
+time="2025-11-13T17:57:52-05:00" level=info msg="  CONNECT /"
+time="2025-11-13T17:57:52-05:00" level=info msg="  OPTIONS /"
+time="2025-11-13T17:57:52-05:00" level=info msg="  TRACE /"
+time="2025-11-13T17:57:52-05:00" level=info msg="  PATCH /"
+time="2025-11-13T17:57:52-05:00" level=info msg="✅ Servidor escuchando en http://localhost:8080"
+time="2025-11-13T17:58:05-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T17:58:05-05:00" level=info msg="📧 Email: kenedpalomino@gmail.com, Provider: credentials"
+time="2025-11-13T17:58:05-05:00" level=error msg="❌ Signin failed: invalid credentials"
+time="2025-11-13T17:58:05-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=29.319ms method=POST path=/auth/signin status=401 userAgent=node
+time="2025-11-13T17:58:20-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T17:58:20-05:00" level=info msg="📧 Email: kenedpalomino@gmail.com, Provider: credentials"
+time="2025-11-13T17:58:20-05:00" level=error msg="❌ Signin failed: invalid credentials"
+time="2025-11-13T17:58:20-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=3.3505ms method=POST path=/auth/signin status=401 userAgent=node
+time="2025-11-13T17:58:32-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T17:58:32-05:00" level=info msg="📧 Email: kenedpalomino@gmail.com, Provider: credentials"
+time="2025-11-13T17:58:32-05:00" level=error msg="❌ Signin failed: invalid credentials"
+time="2025-11-13T17:58:32-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=2.1554ms method=POST path=/auth/signin status=401 userAgent=node
+time="2025-11-13T17:58:50-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T17:58:50-05:00" level=info msg="📧 Email: kenedpalomino@gmail.com, Provider: credentials"
+time="2025-11-13T17:58:50-05:00" level=error msg="❌ Signin failed: invalid credentials"
+time="2025-11-13T17:58:50-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=5.9272ms method=POST path=/auth/signin status=401 userAgent=node
+time="2025-11-13T17:59:03-05:00" level=info msg="🚀 Iniciando servidor..."
+time="2025-11-13T17:59:03-05:00" level=info msg="📦 La base de datos inventario ya existe"
+time="2025-11-13T17:59:08-05:00" level=info msg="🗑️ Tablas eliminadas correctamente"
+time="2025-11-13T17:59:08-05:00" level=info msg="✅ Tablas migradas correctamente"
+time="2025-11-13T17:59:08-05:00" level=info msg="🌱 Ejecutando seeding inicial (usuario admin)..."
+time="2025-11-13T17:59:12-05:00" level=info msg="✅ Seeding completo ✅"
+time="2025-11-13T17:59:12-05:00" level=info msg="📋 Rutas registradas:"
+time="2025-11-13T17:59:12-05:00" level=info msg="  GET /"
+time="2025-11-13T17:59:12-05:00" level=info msg="  GET /health"
+time="2025-11-13T17:59:12-05:00" level=info msg="  HEAD /"
+time="2025-11-13T17:59:12-05:00" level=info msg="  POST /"
+time="2025-11-13T17:59:12-05:00" level=info msg="  POST /auth/signin"
+time="2025-11-13T17:59:12-05:00" level=info msg="  POST /auth/signup"
+time="2025-11-13T17:59:12-05:00" level=info msg="  POST /auth/password-reset/request"
+time="2025-11-13T17:59:12-05:00" level=info msg="  POST /auth/password-reset/validate"
+time="2025-11-13T17:59:12-05:00" level=info msg="  POST /auth/password-reset/confirm"
+time="2025-11-13T17:59:12-05:00" level=info msg="  PUT /"
+time="2025-11-13T17:59:12-05:00" level=info msg="  DELETE /"
+time="2025-11-13T17:59:12-05:00" level=info msg="  CONNECT /"
+time="2025-11-13T17:59:12-05:00" level=info msg="  OPTIONS /"
+time="2025-11-13T17:59:12-05:00" level=info msg="  TRACE /"
+time="2025-11-13T17:59:12-05:00" level=info msg="  PATCH /"
+time="2025-11-13T17:59:12-05:00" level=info msg="✅ Servidor escuchando en http://localhost:8080"
+time="2025-11-13T17:59:48-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T17:59:48-05:00" level=info msg="📧 Email: kenedpalomino@gmail.com, Provider: credentials"
+time="2025-11-13T17:59:48-05:00" level=info msg="✅ Signin successful for kenedpalomino@gmail.com"
+time="2025-11-13T17:59:48-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=330.8816ms method=POST path=/auth/signin status=200 userAgent=node
+time="2025-11-13T18:00:12-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=27.9025ms method=POST path=/auth/password-reset/request status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T18:00:26-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=21.3054ms method=POST path=/auth/password-reset/validate status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T18:00:49-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=531.5548ms method=POST path=/auth/password-reset/confirm status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T18:01:00-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T18:01:00-05:00" level=info msg="📧 Email: kenedpalomino@gmail.com, Provider: credentials"
+time="2025-11-13T18:01:00-05:00" level=error msg="❌ Signin failed: invalid credentials"
+time="2025-11-13T18:01:00-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=4.1771ms method=POST path=/auth/signin status=401 userAgent=node
+time="2025-11-13T18:08:07-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=3.7309ms method=POST path=/auth/password-reset/request status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T18:08:13-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=3.5834ms method=POST path=/auth/password-reset/validate status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T18:08:26-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=332.6171ms method=POST path=/auth/password-reset/confirm status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T18:08:33-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T18:08:33-05:00" level=info msg="📧 Email: kenedpalomino@gmail.com, Provider: credentials"
+time="2025-11-13T18:08:33-05:00" level=error msg="❌ Signin failed: invalid credentials"
+time="2025-11-13T18:08:33-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=8.8921ms method=POST path=/auth/signin status=401 userAgent=node
+time="2025-11-13T18:09:15-05:00" level=info msg="🚀 Iniciando servidor..."
+time="2025-11-13T18:09:16-05:00" level=info msg="📦 La base de datos inventario ya existe"
+time="2025-11-13T18:09:21-05:00" level=info msg="🗑️ Tablas eliminadas correctamente"
+time="2025-11-13T18:09:21-05:00" level=info msg="✅ Tablas migradas correctamente"
+time="2025-11-13T18:09:21-05:00" level=info msg="🌱 Ejecutando seeding inicial (usuario admin)..."
+time="2025-11-13T18:09:26-05:00" level=info msg="✅ Seeding completo ✅"
+time="2025-11-13T18:09:26-05:00" level=info msg="📋 Rutas registradas:"
+time="2025-11-13T18:09:26-05:00" level=info msg="  GET /"
+time="2025-11-13T18:09:26-05:00" level=info msg="  GET /health"
+time="2025-11-13T18:09:26-05:00" level=info msg="  HEAD /"
+time="2025-11-13T18:09:26-05:00" level=info msg="  POST /"
+time="2025-11-13T18:09:26-05:00" level=info msg="  POST /auth/signin"
+time="2025-11-13T18:09:26-05:00" level=info msg="  POST /auth/signup"
+time="2025-11-13T18:09:26-05:00" level=info msg="  POST /auth/password-reset/request"
+time="2025-11-13T18:09:26-05:00" level=info msg="  POST /auth/password-reset/validate"
+time="2025-11-13T18:09:26-05:00" level=info msg="  POST /auth/password-reset/confirm"
+time="2025-11-13T18:09:26-05:00" level=info msg="  PUT /"
+time="2025-11-13T18:09:26-05:00" level=info msg="  DELETE /"
+time="2025-11-13T18:09:26-05:00" level=info msg="  CONNECT /"
+time="2025-11-13T18:09:26-05:00" level=info msg="  OPTIONS /"
+time="2025-11-13T18:09:27-05:00" level=info msg="  TRACE /"
+time="2025-11-13T18:09:27-05:00" level=info msg="  PATCH /"
+time="2025-11-13T18:09:27-05:00" level=info msg="✅ Servidor escuchando en http://localhost:8080"
+time="2025-11-13T18:09:43-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T18:09:43-05:00" level=info msg="📧 Email: kenedpalomino@gmail.com, Provider: credentials"
+time="2025-11-13T18:09:43-05:00" level=info msg="✅ Signin successful for kenedpalomino@gmail.com"
+time="2025-11-13T18:09:43-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=488.1328ms method=POST path=/auth/signin status=200 userAgent=node
+time="2025-11-13T18:10:11-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=57.7208ms method=POST path=/auth/password-reset/request status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T18:10:18-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=21.397ms method=POST path=/auth/password-reset/validate status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T18:10:38-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=242.7337ms method=POST path=/auth/password-reset/confirm status=200 userAgent=insomnia/12.0.0
+time="2025-11-13T18:11:06-05:00" level=info msg="📥 Signin request received"
+time="2025-11-13T18:11:06-05:00" level=info msg="📧 Email: kenedpalomino@gmail.com, Provider: credentials"
+time="2025-11-13T18:11:06-05:00" level=info msg="✅ Signin successful for kenedpalomino@gmail.com"
+time="2025-11-13T18:11:06-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=289.7944ms method=POST path=/auth/signin status=200 userAgent=node

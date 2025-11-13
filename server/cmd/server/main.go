@@ -65,7 +65,7 @@ func main() {
 	app.Use(middlewares.LoggerMiddleware())
 
 	// Registrar rutas
-	routes.RegisterRoutes(app)
+	routes.RegisterRoutes(app, config.DB)
 
 	// ✅ AGREGAR ESTO: Imprimir rutas registradas
 	logger.Log.Info("📋 Rutas registradas:")
