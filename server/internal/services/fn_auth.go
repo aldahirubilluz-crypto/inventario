@@ -1,4 +1,3 @@
-// server/internal/services/fn_auth.go
 package services
 
 import (
@@ -29,7 +28,6 @@ func NewAuthService(db *gorm.DB, argon *security.Argon2Service) AuthService {
 	}
 }
 
-// ===== Errores predefinidos =====
 var (
 	ErrSigninEmailRequired    = errors.New("email is required")
 	ErrSigninPasswordRequired = errors.New("password is required")
@@ -38,6 +36,8 @@ var (
 	ErrUserNotFound           = errors.New("user not found")
 	ErrUserInactive           = errors.New("user is inactive")
 	ErrInvalidLoginMethod     = errors.New("invalid login method, use OAuth provider")
+	// Nuevo error para que el handler lo mapee a 403
+	ErrGoogleUserNotRegistered = errors.New("google user not registered")
 
 	ErrSignupEmailRequired            = errors.New("email is required")
 	ErrSignupEmailInvalid             = errors.New("email is invalid")
@@ -49,13 +49,36 @@ var (
 
 var emailRxSignin = regexp.MustCompile(`^[^\s@]+@[^\s@]+\.[^\s@]+$`)
 
-// ===== Signin =====
 func (s *authServiceImpl) Signin(req dto.SigninRequest) (*dto.AuthResponse, error) {
 	if req.Email == "" {
 		return nil, ErrSigninEmailRequired
 	}
 	if !emailRxSignin.MatchString(req.Email) {
 		return nil, ErrSigninEmailInvalid
+	}
+
+	if req.Provider == "google" {
+		var user models.User
+		if err := s.db.Where("email = ?", req.Email).First(&user).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				// Usamos el error específico para que el handler devuelva 403
+				return nil, ErrGoogleUserNotRegistered
+			}
+			return nil, err
+		}
+
+		if !user.IsActive {
+			return nil, errors.New("user inactive")
+		}
+
+		user.LastLogin = ptrTimeNow()
+		s.db.Save(&user)
+
+		return s.buildAuthResponse(&user), nil
+	}
+
+	if req.Password == "" {
+		return nil, ErrSigninPasswordRequired
 	}
 
 	var user models.User
@@ -70,31 +93,6 @@ func (s *authServiceImpl) Signin(req dto.SigninRequest) (*dto.AuthResponse, erro
 		return nil, ErrUserInactive
 	}
 
-	if req.Provider == "google" {
-		now := time.Now()
-		user.LastLogin = &now
-		s.db.Save(&user)
-
-		var office *string
-		if user.Office != nil {
-			officeStr := string(*user.Office)
-			office = &officeStr
-		}
-
-		return &dto.AuthResponse{
-			ID:     user.ID,
-			Email:  user.Email,
-			Name:   user.Name,
-			Image:  user.Image,
-			Role:   string(user.Rol),
-			Office: office,
-		}, nil
-	}
-
-	if req.Password == "" {
-		return nil, ErrSigninPasswordRequired
-	}
-
 	if user.Password == nil || *user.Password == "" {
 		return nil, ErrInvalidLoginMethod
 	}
@@ -103,27 +101,12 @@ func (s *authServiceImpl) Signin(req dto.SigninRequest) (*dto.AuthResponse, erro
 		return nil, ErrInvalidCredentials
 	}
 
-	now := time.Now()
-	user.LastLogin = &now
+	user.LastLogin = ptrTimeNow()
 	s.db.Save(&user)
 
-	var office *string
-	if user.Office != nil {
-		officeStr := string(*user.Office)
-		office = &officeStr
-	}
-
-	return &dto.AuthResponse{
-		ID:     user.ID,
-		Email:  user.Email,
-		Name:   user.Name,
-		Image:  user.Image,
-		Role:   string(user.Rol),
-		Office: office,
-	}, nil
+	return s.buildAuthResponse(&user), nil
 }
 
-// ===== Signup =====
 func (s *authServiceImpl) Signup(req dto.SignupRequest) (*dto.AuthResponse, error) {
 	if req.Email == "" {
 		return nil, ErrSignupEmailRequired
@@ -131,15 +114,22 @@ func (s *authServiceImpl) Signup(req dto.SignupRequest) (*dto.AuthResponse, erro
 	if !emailRxSignin.MatchString(req.Email) {
 		return nil, ErrSignupEmailInvalid
 	}
-
-	// ✅ NO PERMITIR SIGNUP CON GOOGLE
 	if req.Provider == "google" {
 		return nil, ErrGoogleSignupNotAllowed
 	}
 
-	var existingUser models.User
-	if err := s.db.Where("email = ?", req.Email).First(&existingUser).Error; err == nil {
+	var existing models.User
+	if err := s.db.Where("email = ?", req.Email).First(&existing).Error; err == nil {
 		return nil, ErrSignupEmailTaken
+	}
+
+	if req.Password == "" {
+		return nil, ErrSignupPasswordOrProviderNeeded
+	}
+
+	hashed, err := s.argon.HashPassword(req.Password)
+	if err != nil {
+		return nil, err
 	}
 
 	now := time.Now()
@@ -149,37 +139,36 @@ func (s *authServiceImpl) Signup(req dto.SignupRequest) (*dto.AuthResponse, erro
 		Image:         req.Image,
 		Rol:           models.RolEmployee,
 		IsActive:      true,
+		Password:      &hashed,
 		EmailVerified: &now,
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}
 
-	// Solo permitir signup con credenciales
-	if req.Password == "" {
-		return nil, ErrSignupPasswordOrProviderNeeded
-	}
-	hashedPassword, err := s.argon.HashPassword(req.Password)
-	if err != nil {
-		return nil, err
-	}
-	user.Password = &hashedPassword
-
 	if err := s.db.Create(&user).Error; err != nil {
 		return nil, err
 	}
 
-	var office *string
-	if user.Office != nil {
-		officeStr := string(*user.Office)
-		office = &officeStr
-	}
+	return s.buildAuthResponse(&user), nil
+}
 
+func (s *authServiceImpl) buildAuthResponse(u *models.User) *dto.AuthResponse {
+	var office *string
+	if u.Office != nil {
+		str := string(*u.Office)
+		office = &str
+	}
 	return &dto.AuthResponse{
-		ID:     user.ID,
-		Email:  user.Email,
-		Name:   user.Name,
-		Image:  user.Image,
-		Role:   string(user.Rol),
+		ID:     u.ID,
+		Email:  u.Email,
+		Name:   u.Name,
+		Image:  u.Image,
+		Role:   string(u.Rol),
 		Office: office,
-	}, nil
+	}
+}
+
+func ptrTimeNow() *time.Time {
+	now := time.Now()
+	return &now
 }

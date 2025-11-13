@@ -1,111 +1,77 @@
-//app/src/auth.config.ts
-import Credentials from "next-auth/providers/credentials"
-import Google from "next-auth/providers/google"
-import type { NextAuthConfig } from "next-auth"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import Credentials from "next-auth/providers/credentials";
+import type { NextAuthConfig } from "next-auth";
+import Google from "next-auth/providers/google";
 
-const API_BASE = process.env.API_BASE_URL!
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-interface SigninRequest {
-  email: string
-  password: string
-  provider: "credentials" | "google"
-}
-
-interface AuthResponse {
-  id: string
-  email: string
-  name: string | null
-  image: string | null
-  role: "ADMIN" | "MANAGER" | "EMPLOYEE"
-  office: "OTIC" | "PATRIMONIO" | "ABASTECIMIENTO" | null
-}
-
-interface ApiResponse<T> {
-  status: number
-  message: string
-  data: T | null
-}
-
-async function postJSON<T>(
-  url: string,
-  body: unknown
-): Promise<ApiResponse<T>> {
+async function postJSON(url: string, body: unknown) {
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
-  })
-
-  let data: ApiResponse<T>
+  });
+  let data: any = null;
   try {
-    data = await res.json()
-  } catch {
-    throw new Error("Failed to parse response")
-  }
-
-  return data
+    data = await res.json();
+  } catch {}
+  return { ok: res.ok, status: res.status, data };
 }
 
 const authConfig: NextAuthConfig = {
   providers: [
-    Credentials({
-      name: "Credenciales",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      authorize: async (credentials) => {
-        try {
-          if (!credentials?.email || !credentials?.password) {
-            throw new Error("Email y contraseña requeridos")
-          }
-
-          const request: SigninRequest = {
-            email: credentials.email as string,
-            password: credentials.password as string,
-            provider: "credentials",
-          }
-
-          const response = await postJSON<AuthResponse>(
-            `${API_BASE}/auth/signin`,
-            request
-          )
-
-          if (!response.data) {
-            throw new Error(response.message || "Credenciales inválidas")
-          }
-
-          return {
-            id: response.data.id,
-            email: response.data.email,
-            name: response.data.name,
-            image: response.data.image,
-            role: response.data.role,
-            office: response.data.office,
-          }
-        } catch (error) {
-          console.error("❌ Error en authorize:", error)
-          return null // ✅ Retornar null en lugar de throw
-        }
-      },
-    }),
-
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       allowDangerousEmailAccountLinking: true,
     }),
-  ],
+    Credentials({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      authorize: async (credentials) => {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Credenciales incompletas");
+        }
 
+        const res = await postJSON(`${API_BASE}/auth/signin`, {
+          email: credentials.email,
+          password: credentials.password,
+          provider: "credentials",
+        });
+
+        if (!res.ok || res.data?.status !== 200) {
+          throw new Error(res.data?.message || "Credenciales inválidas");
+        }
+
+        const data = res.data?.data;
+        if (!data?.id) {
+          throw new Error("Respuesta inválida del servidor");
+        }
+
+        return {
+          id: data.id,
+          email: data.email,
+          name: data.name,
+          image: data.image,
+          role: data.role,
+          office: data.office,
+        } as any;
+      },
+    }),
+  ],
   session: {
     strategy: "jwt",
-    maxAge: 30 * 60,
-    updateAge: 10 * 60,
+    maxAge: 60 * 60 * 24 * 7,
   },
-
-  pages: { signIn: "/" },
+  pages: {
+    signIn: "/auth/login",
+    error: "/auth/error",
+  },
   secret: process.env.NEXTAUTH_SECRET,
   trustHost: true,
-}
+};
 
-export default authConfig
+export default authConfig;

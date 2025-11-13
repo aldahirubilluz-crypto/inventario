@@ -25,7 +25,7 @@ export default function LeftHero() {
   useEffect(() => {
     const loadAnimation = async () => {
       try {
-        const response = await fetch("/lottie/almacenaje.json");
+        const response = await fetch("/lottie/bot.json");
         if (!response.ok) throw new Error("Failed to load animation");
         const data: LottieAnimation = await response.json();
         setAnimationData(data);

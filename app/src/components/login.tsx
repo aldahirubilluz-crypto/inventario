@@ -1,17 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// components/RightLogin.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-provider";
 import { toast } from "sonner";
@@ -32,24 +28,18 @@ interface LottieAnimation {
 
 export default function RightLogin() {
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [botAnimation, setBotAnimation] = useState<LottieAnimation | null>(null);
+  const [botAnimation, setBotAnimation] = useState<LottieAnimation | null>(
+    null
+  );
   const [lottieLoading, setLottieLoading] = useState(true);
 
   useEffect(() => {
-    const loadBot = async () => {
-      try {
-        const res = await fetch("/lottie/bot.json");
-        if (!res.ok) throw new Error("Failed to load bot");
-        const data: LottieAnimation = await res.json();
-        setBotAnimation(data);
-      } catch (err) {
-        console.error("Error loading bot:", err);
-      } finally {
-        setLottieLoading(false);
-      }
-    };
-    loadBot();
+    fetch("/lottie/bot.json")
+      .then((res) => res.json())
+      .then((data) => setBotAnimation(data))
+      .finally(() => setLottieLoading(false));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -60,20 +50,38 @@ export default function RightLogin() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-    if (res?.error) {
-      toast.error("Credenciales incorrectas");
-    } else {
-      toast.success("¡Bienvenido!");
-      window.location.href = "/dashboard";
+      if (res?.error) {
+        toast.error("Credenciales incorrectas");
+      } else if (res?.ok) {
+        toast.success("¡Bienvenido!");
+        window.location.href = "/dashboard";
+      } else {
+        toast.error("Error desconocido");
+      }
+    } catch (error) {
+      console.error("Error en handleSubmit:", error);
+      toast.error("Error al intentar iniciar sesión");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    setLoading(false);
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+    try {
+      await signIn("google", { callbackUrl: "/dashboard" });
+    } catch (error) {
+      console.error("Error en Google login:", error);
+      toast.error("Error al iniciar sesión con Google");
+      setGoogleLoading(false);
+    }
   };
 
   return (
@@ -87,19 +95,14 @@ export default function RightLogin() {
           <div className="sm:hidden flex justify-center -mt-3">
             {lottieLoading ? (
               <div className="w-20 h-20 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
-            ) : botAnimation ? (
-              <div className="w-36 h-36 -mb-8 drop-shadow-lg">
-                <Lottie
-                  animationData={botAnimation}
-                  loop
-                  autoplay
-                  className="w-full h-full"
-                />
-              </div>
-            ) : null}
+            ) : (
+              botAnimation && (
+                <div className="w-36 h-36 -mb-8 drop-shadow-lg">
+                  <Lottie animationData={botAnimation} loop autoplay />
+                </div>
+              )
+            )}
           </div>
-
-          {/* Theme Toggle */}
 
           <div className="space-y-2 text-center">
             <CardTitle className="text-3xl font-bold text-card-foreground">
@@ -123,7 +126,7 @@ export default function RightLogin() {
                 type="email"
                 required
                 placeholder="admin@demo.com"
-                className="h-12 bg-muted/50 border-input text-card-foreground placeholder:text-muted-foreground/60 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0"
+                className="h-12 bg-muted/50 border-input text-card-foreground placeholder:text-muted-foreground/60 focus-visible:ring-2 focus-visible:ring-primary"
               />
             </div>
 
@@ -138,13 +141,12 @@ export default function RightLogin() {
                   type={showPassword ? "text" : "password"}
                   required
                   placeholder="••••••••"
-                  className="h-12 pr-11 bg-muted/50 border-input text-card-foreground placeholder:text-muted-foreground/60 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0"
+                  className="h-12 pr-11 bg-muted/50 border-input text-card-foreground placeholder:text-muted-foreground/60 focus-visible:ring-2 focus-visible:ring-primary"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-primary transition-colors"
-                  aria-label={showPassword ? "Ocultar" : "Mostrar"}
+                  className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-primary"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -163,7 +165,7 @@ export default function RightLogin() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 rounded-xl"
+              className="w-full h-12 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl"
             >
               <LogIn size={18} className="mr-2" />
               {loading ? "Verificando..." : "Iniciar sesión"}
@@ -181,8 +183,9 @@ export default function RightLogin() {
 
           <Button
             variant="outline"
-            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-            className="w-full h-12 border border-border hover:bg-accent/50 text-card-foreground rounded-xl transition-all"
+            onClick={handleGoogleLogin}
+            disabled={googleLoading}
+            className="w-full h-12 border border-border hover:bg-accent/50 text-card-foreground rounded-xl"
           >
             <img
               src="/icons/google-icon.svg"
@@ -191,7 +194,7 @@ export default function RightLogin() {
               height={20}
               className="mr-2"
             />
-            Continuar con Google
+            {googleLoading ? "Verificando..." : "Continuar con Google"}
           </Button>
         </CardContent>
       </Card>

@@ -1,49 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-//app/src/auth.ts
-import NextAuth from "next-auth"
-import authConfig from "./auth.config"
+import NextAuth from "next-auth";
+import authConfig from "./auth.config";
 
-const API_BASE = process.env.API_BASE_URL!
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-interface SigninRequest {
-  email: string
-  password: string
-  provider: "google"
-}
-
-interface AuthResponse {
-  id: string
-  email: string
-  name: string | null
-  image: string | null
-  role: "ADMIN" | "MANAGER" | "EMPLOYEE"
-  office: "OTIC" | "PATRIMONIO" | "ABASTECIMIENTO" | null
-}
-
-interface ApiResponse<T> {
-  status: number
-  message: string
-  data: T | null
-}
-
-async function postJSON<T>(
-  url: string,
-  body: unknown
-): Promise<ApiResponse<T>> {
+async function postJSON(url: string, body: unknown) {
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
-  })
-
-  let data: ApiResponse<T>
+  });
+  let data: any = null;
   try {
-    data = await res.json()
-  } catch {
-    throw new Error("Failed to parse response")
-  }
-
-  return data
+    data = await res.json();
+  } catch {}
+  return { ok: res.ok, status: res.status, data };
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -51,138 +22,60 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   callbacks: {
     async jwt({ token, user, account, profile }) {
-      // Login con credenciales
       if (account?.provider === "credentials" && user) {
-        token.id = user.id
-        token.email = user.email
-        token.name = user.name
-        token.image = user.image
-        token.role = user.role
-        token.office = user.office
-        return token
+        token.id = (user as any).id;
+        token.name = (user as any).name ?? null;
+        token.email = (user as any).email ?? null;
+        token.image = (user as any).image ?? null;
+        (token as any).role = (user as any).role ?? "EMPLOYEE";
+        (token as any).office = (user as any).office ?? null;
+        return token;
       }
 
-      // Login con Google
-      if (account?.provider === "google" && profile) {
-        const email = profile.email
+      if (account?.provider === "google") {
+        const email = (profile as any)?.email || token.email;
 
-        if (!email) {
-          console.error("❌ No se pudo obtener email de Google")
-          // ✅ Marcar token como inválido
-          token.error = "NoEmail"
-          return token
-        }
-
-        try {
-          const signinRequest: SigninRequest = {
+        if (email) {
+          const signinRes = await postJSON(`${API_BASE}/auth/signin`, {
             email,
-            password: "",
             provider: "google",
+          });
+
+          if (!signinRes.ok || signinRes.data?.status !== 200) {
+            throw new Error(
+              signinRes.data?.message || "No se pudo iniciar sesión con Google"
+            );
           }
 
-          const signinResponse = await postJSON<AuthResponse>(
-            `${API_BASE}/auth/signin`,
-            signinRequest
-          )
-
-          if (!signinResponse.data) {
-            console.error("❌ Usuario no encontrado:", email)
-            // ✅ Marcar token como inválido
-            token.error = "UserNotFound"
-            return token
-          }
-
-          const userData = signinResponse.data
-
-          token.id = userData.id
-          token.email = userData.email
-          token.name = userData.name
-          token.image = userData.image
-          token.role = userData.role
-          token.office = userData.office
-          
-          console.log("✅ Login Google exitoso:", email)
-        } catch (error) {
-          console.error("❌ Error en autenticación Google:", error)
-          // ✅ Marcar token como inválido
-          token.error = "AuthError"
-          return token
+          const data = signinRes.data?.data;
+          token.id = data.id;
+          token.email = data.email;
+          token.name = data.name;
+          token.image = data.image;
+          (token as any).role = data.role;
+          (token as any).office = data.office;
+          (token as any).provider = "google";
+          return token;
         }
       }
 
-      return token
+      return token;
     },
 
     async session({ session, token }) {
-      // ✅ Si hay error en el token, no crear sesión válida
-      if ("error" in token) {
-        console.error("❌ Token con error, rechazando sesión:", token.error)
-        // Retornar sesión inválida
-        return {
-          ...session,
-          user: undefined,
-        } as any
+      if (session.user) {
+        (session.user as any).id = token.id as string;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.image = (token as any).image ?? null;
+        (session.user as any).role = (token as any).role ?? "EMPLOYEE";
+        (session.user as any).office = (token as any).office ?? null;
       }
-
-      // ✅ Solo crear sesión si el token tiene ID (usuario válido)
-      if (token.id && session.user) {
-        session.user.id = token.id
-        session.user.name = token.name
-        session.user.email = token.email
-        session.user.image = token.image
-        session.user.role = token.role
-        session.user.office = token.office
-        return session
-      }
-
-      // Si no hay ID, sesión inválida
-      return {
-        ...session,
-        user: undefined,
-      } as any
+      return session;
     },
 
-    // ✅ Verificar que la sesión tenga usuario válido
-    async authorized({ auth }) {
-      // Si no hay auth o no hay user, denegar
-      if (!auth || !auth.user) {
-        return false
-      }
-      
-      // Si no tiene rol, denegar
-      if (!auth.user.role) {
-        return false
-      }
-      
-      return true
-    },
-  },
-
-  cookies: {
-    sessionToken: {
-      name: "inventario_session_token",
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
-    csrfToken: {
-      name: "inventario_csrf_token",
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
+    authorized: async ({ auth }) => !!auth,
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-  
-  pages: {
-    signIn: "/",
-    error: "/",
-  },
-})
+});

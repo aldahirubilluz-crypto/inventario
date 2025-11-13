@@ -171,7 +171,16 @@
 //   );
 // }
 
-"use client"
-export default function Page () {
-  return <div>Hola</div>
+// app/dashboard/page.tsx
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+
+export default async function AdminPage() {
+  const session = await auth();
+
+  if (session?.user.role !== "ADMIN") {
+    redirect("/dashboard"); // Redirigir a dashboard normal
+  }
+
+  return <div>Panel de Administrador</div>;
 }

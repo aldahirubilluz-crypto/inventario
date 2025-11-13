@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { AlertTriangle, ShieldAlert, Lock, XCircle, Cog } from "lucide-react";
+import { AlertTriangle, ShieldAlert, Lock, XCircle } from "lucide-react";
 
 export default function AuthError() {
   const searchParams = useSearchParams();

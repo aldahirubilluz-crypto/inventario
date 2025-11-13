@@ -1,40 +1,23 @@
-//app/src/types/next-auth.d.ts
-import { DefaultSession, DefaultUser } from "next-auth"
-import { JWT as DefaultJWT } from "next-auth/jwt"
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+import { DefaultSession, DefaultUser } from 'next-auth';
+import 'next-auth/jwt';
 
-export type UserRole = "ADMIN" | "MANAGER" | "EMPLOYEE"
-export type Office = "OTIC" | "PATRIMONIO" | "ABASTECIMIENTO"
+export type UserResponse = {
+  id?: string;
+  email?: string;
+  name?: string;
+  image?: string;
+  role?: string;
+  office?: string | null;
+};
 
-declare module "next-auth" {
+declare module 'next-auth' {
   interface Session {
-    user: {
-      id: string
-      role: UserRole
-      office: Office | null
-      email: string
-      name: string | null
-      image: string | null
-    } & DefaultSession["user"]
+    user: UserResponse & DefaultSession['user'];
   }
-
-  interface User extends DefaultUser {
-    id: string
-    role: UserRole
-    office: Office | null
-    email: string
-    name: string | null
-    image: string | null
-  }
+  interface User extends DefaultUser, UserResponse {}
 }
 
-declare module "next-auth/jwt" {
-  interface JWT extends DefaultJWT {
-    id: string
-    role: UserRole
-    office: Office | null
-    email: string
-    name: string | null
-    image: string | null
-    error?: "NoEmail" | "UserNotFound" | "AuthError"
-  }
+declare module 'next-auth/jwt' {
+  interface jwt extends UserResponse {}
 }

@@ -1,18 +1,18 @@
 // src/app/dashboard/layout.tsx
-import { auth } from "@/auth"
-import { redirect } from "next/navigation"
-import DashboardSidebar from "@/components/dashboard-sidebar"
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import DashboardSidebar from "@/components/dashboard-sidebar";
 
 export default async function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const session = await auth()
-  
-  if (!session?.user || !session.user.role) {
-    redirect("/")
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect("/auth/login");
   }
 
-  return <DashboardSidebar>{children}</DashboardSidebar>
+  return <DashboardSidebar>{children}</DashboardSidebar>;
 }

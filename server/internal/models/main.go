@@ -42,26 +42,26 @@ type User struct {
 	Rol           Rol     `gorm:"type:varchar(20);default:'EMPLOYEE'"`
 	Office        *Office `gorm:"type:varchar(50)"`
 	Phone         *string
-	IsActive      bool       `gorm:"default:true"`
+	IsActive      bool `gorm:"default:true"`
 	LastLogin     *time.Time
-	LastIP        *string    `gorm:"type:varchar(50)"`   // ✅ Última IP usada
-	LastDevice    *string    `gorm:"type:varchar(255)"`  // ✅ Dispositivo o navegador
-	LastOS        *string    `gorm:"type:varchar(100)"`  // ✅ Sistema operativo
-	LastLocation  *string    `gorm:"type:varchar(255)"`  // ✅ Ubicación aproximada (opcional, requiere geolocalización por IP)
-	CreatedAt     time.Time  `gorm:"autoCreateTime"`
-	UpdatedAt     time.Time  `gorm:"autoUpdateTime"`
+	LastIP        *string   `gorm:"type:varchar(50)"`
+	LastDevice    *string   `gorm:"type:varchar(255)"`
+	LastOS        *string   `gorm:"type:varchar(100)"`
+	LastLocation  *string   `gorm:"type:varchar(255)"`
+	CreatedAt     time.Time `gorm:"autoCreateTime"`
+	UpdatedAt     time.Time `gorm:"autoUpdateTime"`
 
-	CreatedByID *string `gorm:"type:uuid"`
+	// 🔹 Usuario que creó este registro
+	CreatedByID *string `gorm:"type:uuid;index"`
 	CreatedBy   *User   `gorm:"foreignKey:CreatedByID;constraint:OnDelete:SET NULL"`
 
+	// 🔹 Relaciones con otras tablas
 	Accounts            []Account
 	Sessions            []Session
 	PasswordResetTokens []PasswordResetToken
-
-	AssetsRegistered []Asset `gorm:"foreignKey:RegisteredByID"`
-	ManagedEmployees []User  `gorm:"foreignKey:CreatedByID"`
+	AssetsRegistered    []Asset `gorm:"foreignKey:RegisteredByID"`
+	ManagedEmployees    []User  `gorm:"foreignKey:CreatedByID"`
 }
-
 
 // ======= ACCOUNT =======
 type Account struct {

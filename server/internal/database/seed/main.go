@@ -52,10 +52,39 @@ func seedUsers(db *gorm.DB) error {
 
 	argon := security.NewArgon2Service()
 
+	var adminID string
 	managerIDs := make(map[string]string)
 
+	// 🔹 Crear primero al ADMIN
 	for _, u := range users {
-		if u.Rol != "ADMIN" && u.Rol != "MANAGER" {
+		if u.Rol == "ADMIN" {
+			hashedPassword, err := argon.HashPassword(u.Password)
+			if err != nil {
+				return fmt.Errorf("error al encriptar la contraseña de %s: %w", u.Email, err)
+			}
+
+			user := models.User{
+				Name:          &u.Name,
+				Email:         u.Email,
+				Password:      ptrString(hashedPassword),
+				Rol:           models.Rol(u.Rol),
+				IsActive:      true,
+				EmailVerified: ptrTime(time.Now()),
+			}
+
+			if err := db.Create(&user).Error; err != nil {
+				return fmt.Errorf("error al crear usuario %s: %w", u.Email, err)
+			}
+
+			adminID = user.ID
+			fmt.Printf("👤 Usuario ADMIN %s creado correctamente.\n", u.Email)
+			break
+		}
+	}
+
+	// 🔹 Crear managers y asignar admin como creador
+	for _, u := range users {
+		if u.Rol != "MANAGER" {
 			continue
 		}
 
@@ -77,6 +106,7 @@ func seedUsers(db *gorm.DB) error {
 			Rol:           models.Rol(u.Rol),
 			Office:        office,
 			IsActive:      true,
+			CreatedByID:   &adminID,
 			EmailVerified: ptrTime(time.Now()),
 		}
 
@@ -84,17 +114,14 @@ func seedUsers(db *gorm.DB) error {
 			return fmt.Errorf("error al crear usuario %s: %w", u.Email, err)
 		}
 
-		if u.Rol == "MANAGER" && u.Office != nil {
+		if u.Office != nil {
 			managerIDs[*u.Office] = user.ID
 		}
 
-		officeStr := "sin oficina"
-		if u.Office != nil {
-			officeStr = *u.Office
-		}
-		fmt.Printf("👤 Usuario %s (%s - %s) creado correctamente.\n", u.Email, u.Rol, officeStr)
+		fmt.Printf("👤 Usuario MANAGER %s (%s) creado correctamente.\n", u.Email, *u.Office)
 	}
 
+	// 🔹 Crear empleados y asignar manager de su oficina como creador
 	for _, u := range users {
 		if u.Rol != "EMPLOYEE" {
 			continue
@@ -131,11 +158,7 @@ func seedUsers(db *gorm.DB) error {
 			return fmt.Errorf("error al crear usuario %s: %w", u.Email, err)
 		}
 
-		officeStr := "sin oficina"
-		if u.Office != nil {
-			officeStr = *u.Office
-		}
-		fmt.Printf("👤 Usuario %s (%s - %s) creado correctamente.\n", u.Email, u.Rol, officeStr)
+		fmt.Printf("👤 Usuario EMPLOYEE %s (%s) creado correctamente.\n", u.Email, *u.Office)
 	}
 
 	fmt.Println("✅ Todos los usuarios seed creados exitosamente")
