@@ -12,7 +12,7 @@ type Rol string
 const (
 	RolAdmin    Rol = "ADMIN"
 	RolManager  Rol = "MANAGER"
-	RolEmployee Rol = "EMPLOYEE" // ✅ Nuevo rol
+	RolEmployee Rol = "EMPLOYEE"
 )
 
 type Office string

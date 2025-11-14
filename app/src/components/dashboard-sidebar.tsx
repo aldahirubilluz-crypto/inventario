@@ -1,4 +1,3 @@
-// src/components/dashboard-sidebar.tsx
 "use client";
 
 import {
@@ -34,6 +33,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Session } from "next-auth";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 type UserRole = "ADMIN" | "MANAGER" | "EMPLOYEE";
 type Office = "OTIC" | "PATRIMONIO" | "ABASTECIMIENTO";
@@ -52,13 +52,12 @@ const hasAccess = (
   userOffice: Office | null | undefined
 ): boolean => {
   if (!userRole) return false;
-
   if (!item.allowedRoles.includes(userRole)) return false;
 
+  if (userRole === "ADMIN") return true;
+
   if (!item.allowedOffices || item.allowedOffices.length === 0) return true;
-
   if (!userOffice) return false;
-
   return item.allowedOffices.includes(userOffice);
 };
 
@@ -105,7 +104,6 @@ const allMenuItems: MenuItem[] = [
   },
 ];
 
-// ✅ Mover el componente fuera del render
 function SidebarNavContent({
   menuItems,
   pathname,
@@ -172,17 +170,39 @@ function SidebarNavContent({
         </SidebarGroup>
 
         {!isCollapsed && session?.user && (
-          <div className="mt-auto px-4 py-3 border-t border-border/40">
-            <div className="text-xs text-muted-foreground space-y-1">
-              <p>
-                <span className="font-semibold">Rol:</span> {session.user.role}
-              </p>
-              {session.user.office && (
-                <p>
-                  <span className="font-semibold">Oficina:</span>{" "}
-                  {session.user.office}
-                </p>
-              )}
+          <div className="mt-auto px-4 py-4 border-t border-border/40">
+            <div className="flex items-center gap-3">
+              {/* Avatar */}
+              <Avatar className="h-10 w-10">
+                <AvatarImage
+                  src={session.user.image ?? undefined}
+                  alt={session.user.name ?? "Usuario"}
+                />
+                <AvatarFallback>
+                  {session.user.name
+                    ?.split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase() ?? "U"}
+                </AvatarFallback>
+              </Avatar>
+
+              {/* Info */}
+              <div className="flex flex-col text-sm leading-tight">
+                <span className="font-semibold text-foreground">
+                  {session.user.name}
+                </span>
+
+                <span className="text-xs text-muted-foreground">
+                  {session.user.role}
+                </span>
+
+                {session.user.office && (
+                  <span className="text-xs text-muted-foreground">
+                    {session.user.office}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -218,8 +238,8 @@ export default function DashboardSidebar({
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
-  const userRole = session?.user?.role;
-  const userOffice = session?.user?.office;
+  const userRole = session?.user?.role as UserRole | undefined;
+  const userOffice = session?.user?.office as Office | null | undefined;
 
   const menuItems = allMenuItems.filter((item) =>
     hasAccess(item, userRole, userOffice)

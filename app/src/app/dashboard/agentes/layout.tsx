@@ -9,7 +9,7 @@ export default async function AgentesLayout({
 }) {
   const session = await auth();
 
-  if (session?.user?.role !== "ADMIN") {
+  if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
     redirect("/dashboard");
   }
 

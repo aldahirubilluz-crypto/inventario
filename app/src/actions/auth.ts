@@ -132,3 +132,43 @@ export async function updatePasswordWithToken(
     return { error: "Error de conexión al servidor." };
   }
 }
+
+export async function updatePasswordById(
+  userId: string,
+  currentPassword: string,
+  newPassword: string
+) {
+  try {
+    const response = await fetch(`${API_BASE}/user/update-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+        password: currentPassword,
+        newPassword,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: data.message || "Error al actualizar la contraseña",
+      };
+    }
+
+    return {
+      success: true,
+      message: data.message,
+    };
+  } catch (error) {
+    console.error("Error en updatePasswordById:", error);
+    return {
+      success: false,
+      error: "Error de conexión con el servidor",
+    };
+  }
+}

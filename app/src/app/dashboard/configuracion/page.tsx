@@ -1,5 +1,6 @@
-"use client";
+/* eslint-disable react-hooks/incompatible-library */
 
+"use client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -86,8 +87,7 @@ export default function Configuracion() {
       setShowNew(false);
       setShowConfirm(false);
 
-      // 🔹 Cerrar sesión automáticamente
-      await signOut({ callbackUrl: "/" }); // redirige al login
+      await signOut({ callbackUrl: "/" });
     } else {
       toast.error(result.error || "Error al actualizar la contraseña", {
         icon: <AlertCircle className="w-5 h-5" />,
