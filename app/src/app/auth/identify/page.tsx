@@ -9,8 +9,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { checkUserExists, generateResetToken } from "@/actions/auth";
 import { sendRecoveryEmail } from "@/actions/email-actions";
+import { checkUserExists, generateResetTokene } from "@/actions/auth";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -26,25 +26,29 @@ export default function ForgotPasswordPage() {
 
     setIsLoading(true);
     try {
-      const user = await checkUserExists(email);
-      if ("error" in user) {
-        toast.error(user.error);
+      // 1. Verificar si el usuario existe (llama a la API de Go)
+      const result = await checkUserExists(email);
+
+      if (!result.success) {
+        toast.error(result.error);
         return;
       }
 
-      const resetData = await generateResetToken(email, user.id);
-      if (!resetData.code || !resetData.token) {
-        toast.error("Error al generar el código de verificación");
-        return;
-      }
+      // 2. Generar el Token (llama a la API de Go /request, que genera el código y el JWT inicial)
+      const resetData = await generateResetTokene(email);
 
+      
+      // 3. Enviar el email (usando el código de 6 dígitos que vino de Go)
       await sendRecoveryEmail({
         email,
         token: resetData.code,
-        name: user.name || "Usuario",
+        name: resetData.name,
       });
 
+
       toast.success("¡Código enviado! Revisa tu correo");
+
+      // 4. Redirigir a la página de verificación, pasando el email y el JWT Inicial (resetData.token)
       router.push(
         `/auth/verify?email=${encodeURIComponent(email)}&token=${
           resetData.token

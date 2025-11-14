@@ -5,19 +5,21 @@ import (
 	"gorm.io/gorm"
 	"server/internal/handlers"
 	"server/internal/services"
-	"server/pkgs/security" // 💡 Importamos el paquete de seguridad
+	"server/pkgs/security"
 )
 
 func RegisterPasswordResetRoutes(app *fiber.App, db *gorm.DB) {
-	// 1. Crear la instancia del servicio Argon2
+
 	argon2Service := security.NewArgon2Service()
 	
-	// 2. Crear el servicio de reseteo, inyectando la DB y el servicio Argon2
 	passwordResetService := services.NewPasswordResetService(db, argon2Service)
-	passwordResetHandler := handlers.NewPasswordResetHandler(passwordResetService)
+	userService := services.NewUserService(db)
+	
+	passwordResetHandler := handlers.NewPasswordResetHandler(passwordResetService, userService)
 
 	auth := app.Group("/auth/password-reset")
 	{
+		auth.Post("/user-exists", passwordResetHandler.CheckUserExists)
 		auth.Post("/request", passwordResetHandler.RequestPasswordReset)
 		auth.Post("/validate", passwordResetHandler.ValidateResetCode)
 		auth.Post("/confirm", passwordResetHandler.ResetPassword)

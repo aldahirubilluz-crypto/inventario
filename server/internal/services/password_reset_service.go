@@ -1,3 +1,4 @@
+//internal/services/password_reset_service.go
 package services
 
 import (
@@ -25,6 +26,33 @@ func NewPasswordResetService(db *gorm.DB, argon2Service *security.Argon2Service)
 		db:            db,
 		argon2Service: argon2Service,
 	}
+}
+
+var ErrUserNotFound = errors.New("no existe una cuenta para el correo ingresado")
+
+type UserService struct {
+	db *gorm.DB
+}
+
+func NewUserService(db *gorm.DB) *UserService {
+	return &UserService{db: db}
+}
+
+func (s *UserService) CheckUserExists(email string) (*models.User, error) {
+	var user models.User
+	
+	if err := s.db.Where("email = ? AND is_active = ?", email, true).First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrUserNotFound
+		}
+		return nil, err
+	}
+	
+	return &models.User{
+		ID:    user.ID,
+		Email: user.Email,
+		Name:  user.Name,
+	}, nil
 }
 
 func (s *PasswordResetService) RequestPasswordReset(req dto.PasswordResetRequestDTO) (map[string]interface{}, error) {

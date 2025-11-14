@@ -20,7 +20,7 @@ function ResetPasswordContent() {
   const token = searchParams.get("token");
 
   return (
-    <div className="flex h-screen bg-background text-foreground">
+    <div className="flex h-screen w-full bg-background text-foreground">
       {/* Sección izquierda: formulario */}
       <div className="flex w-full h-full justify-center flex-col p-6 lg:w-1/2">
         <div className="flex flex-1 items-center justify-center">

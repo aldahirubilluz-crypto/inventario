@@ -1,6 +1,10 @@
 // internal/dto/password_reset.go
 package dto
 
+type UserExistsRequestDTO struct {
+	Email string `json:"email" validate:"required,email"`
+}
+
 type PasswordResetRequestDTO struct {
 	Email string `json:"email" validate:"required,email"`
 }

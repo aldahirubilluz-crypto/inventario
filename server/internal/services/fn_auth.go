@@ -33,7 +33,6 @@ var (
 	ErrSigninPasswordRequired = errors.New("password is required")
 	ErrSigninEmailInvalid     = errors.New("email is invalid")
 	ErrInvalidCredentials     = errors.New("invalid credentials")
-	ErrUserNotFound           = errors.New("user not found")
 	ErrUserInactive           = errors.New("user is inactive")
 	ErrInvalidLoginMethod     = errors.New("invalid login method, use OAuth provider")
 	// Nuevo error para que el handler lo mapee a 403

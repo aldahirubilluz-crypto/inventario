@@ -1,239 +1,134 @@
-// "use server";
+"use server";
 
-// import { prisma } from "@/config/prisma";
-// import jwt from "jsonwebtoken";
-// import { addMinutes, isAfter } from "date-fns";
-// import bcrypt from "bcryptjs";
+const API_BASE = process.env.API_BASE_URL!
 
-// export async function checkUserExists(email: string) {
-//   const user = await prisma.user.findUnique({
-//     where: {
-//       email,
-//       isActive: true,
-//     },
-//     select: { id: true, email: true, name: true },
-//   });
+export async function checkUserExists(email: string) {
+  try {
+    const response = await fetch(
+      `${API_BASE}/auth/password-reset/user-exists`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      }
+    );
 
-//   if (!user) {
-//     return { error: "No existe una cuenta para el correo ingresado" };
-//   }
+    const apiResult = await response.json();
 
-//   return user;
-// }
+    if (!response.ok) {
+      return {
+        success: false,
+        error: apiResult.message || "Error al verificar el correo",
+      };
+    }
 
-// export async function generateResetToken(
-//   email: string,
-//   userId: string,
-//   checkOnly: boolean = false
-// ) {
-//   const lastToken = await prisma.passwordResetToken.findFirst({
-//     where: { email },
-//     orderBy: { createdAt: "desc" },
-//   });
+    if (apiResult.status !== 200) {
+      return {
+        success: false,
+        error: apiResult.message || "Error al verificar el correo",
+      };
+    }
 
-//   const cooldownSeconds = 60 * 1000;
-//   if (lastToken && lastToken.lastSentAt) {
-//     const now = Date.now();
-//     const timeSinceLastSent = now - Number(lastToken.lastSentAt);
-//     if (timeSinceLastSent < cooldownSeconds) {
-//       if (checkOnly) {
-//         return {
-//           cooldownRemaining: Math.ceil(
-//             (cooldownSeconds - timeSinceLastSent) / 1000
-//           ),
-//         };
-//       }
-//       return { error: "Debes esperar antes de solicitar un nuevo código" };
-//     }
-//   }
+    return { success: true };
+  } catch (error) {
+    console.error("[checkUserExists] Error:", error);
+    return { success: false, error: "Error de conexión al servidor." };
+  }
+}
+export async function generateResetTokene(email: string) {
+  try {
+    const response = await fetch(
+      `${API_BASE}/auth/password-reset/request`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      }
+    );
 
-//   if (checkOnly) {
-//     return { cooldownRemaining: 0 };
-//   }
+    const apiResult = await response.json();
 
-//   await prisma.passwordResetToken.deleteMany({
-//     where: { userId },
-//   });
+    if (!response.ok || apiResult.status !== 200) {
+      return {
+        success: false,
+        error: apiResult.message || "Error al generar código",
+      };
+    }
 
-//   const code = Array.from(crypto.getRandomValues(new Uint8Array(6)))
-//     .map((b) => (b % 10).toString())
-//     .join("");
+    return {
+      success: true,
+      code: apiResult.data.code,
+      expires: apiResult.data.expires,
+      name: apiResult.data.name, 
+      token: apiResult.data.token, 
+    };
 
-//   const jwtSecret = process.env.JWT_SECRET;
-//   if (!jwtSecret) {
-//     throw new Error(
-//       "JWT_SECRET no está configurado en las variables de entorno"
-//     );
-//   }
+  } catch (error) {
+    console.error("[generateResetTokene] Error:", error);
+    return {
+      success: false,
+      error: "Error de conexión al servidor.",
+    };
+  }
+}
 
-//   const token = jwt.sign(
-//     { userId, email, type: "password_reset_initial" },
-//     jwtSecret,
-//     { expiresIn: "15m" }
-//   );
 
-//   const expires = addMinutes(new Date(), 15);
-//   const lastSentAt = BigInt(Date.now());
+export async function validateResetCode(email: string, code: string) {
+  try {
+    const response = await fetch(
+      `${API_BASE}/auth/password-reset/validate`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, code }),
+      }
+    );
 
-//   const newToken = await prisma.passwordResetToken.create({
-//     data: {
-//       userId,
-//       code,
-//       token,
-//       email,
-//       expires,
-//       lastSentAt,
-//     },
-//   });
+    const apiResult = await response.json();
 
-//   return {
-//     code: newToken.code,
-//     token: newToken.token,
-//     expires: newToken.expires,
-//   };
-// }
+    if (apiResult.status !== 200 || apiResult.error || !apiResult.data.token) {
+      return { error: apiResult.message || "Error al validar el código" };
+    }
 
-// export async function validateResetCode(email: string, code: string) {
-//   try {
-//     const resetToken = await prisma.passwordResetToken.findFirst({
-//       where: {
-//         email,
-//         code,
-//         expires: {
-//           gt: new Date(),
-//         },
-//       },
-//       orderBy: {
-//         createdAt: "desc",
-//       },
-//     });
+    return {
+      success: true,
+      email: apiResult.data.email,
+      token: apiResult.data.token,
+    };
+  } catch (error) {
+    console.error("[validateResetCode] Error:", error);
+    return { error: "Error de conexión al servidor." };
+  }
+}
 
-//     if (!resetToken) {
-//       return { error: "Código inválido, ya utilizado o expirado" };
-//     }
+export async function updatePasswordWithToken(
+  email: string,
+  token: string,
+  newPassword: string
+) {
+  try {
+    const response = await fetch(
+      `${API_BASE}/auth/password-reset/confirm`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, token, newPassword }),
+      }
+    );
 
-//     const jwtSecret = process.env.JWT_SECRET;
-//     if (!jwtSecret) {
-//       throw new Error(
-//         "JWT_SECRET no está configurado en las variables de entorno"
-//       );
-//     }
+    const apiResult = await response.json();
 
-//     try {
-//       jwt.verify(resetToken.token, jwtSecret);
-//     } catch (error) {
-//       console.error("[validateResetCode] JWT inválido:", error);
-//       return { error: "Token inválido o expirado" };
-//     }
+    if (apiResult.status !== 200) {
+      return { error: apiResult.message || "Error al cambiar la contraseña" };
+    }
 
-//     const newToken = jwt.sign(
-//       { userId: resetToken.userId, email, type: "password_reset_final" },
-//       jwtSecret,
-//       { expiresIn: "30m" }
-//     );
-
-//     await prisma.passwordResetToken.update({
-//       where: { id: resetToken.id },
-//       data: {
-//         isValidated: true,
-//       },
-//     });
-
-//     await prisma.passwordResetToken.updateMany({
-//       where: {
-//         userId: resetToken.userId,
-//         id: { not: resetToken.id },
-//       },
-//       data: {
-//         expires: new Date(0),
-//       },
-//     });
-
-//     return {
-//       success: true,
-//       email: resetToken.email,
-//       token: newToken,
-//     };
-//   } catch (error) {
-//     console.error("[validateResetCode] Error:", error);
-//     return { error: "Error interno al validar el código" };
-//   }
-// }
-
-// export async function updatePasswordWithToken(
-//   email: string,
-//   token: string,
-//   newPassword: string
-// ) {
-//   const jwtSecret = process.env.JWT_SECRET!;
-//   let payload: any;
-
-//   try {
-//     payload = jwt.verify(token, jwtSecret);
-//   } catch (error) {
-//     return { error: "Token inválido o expirado" };
-//   }
-
-//   if (payload.type !== "password_reset_final" || payload.email !== email) {
-//     return { error: "Token no válido" };
-//   }
-
-//   const resetToken = await prisma.passwordResetToken.findFirst({
-//     where: {
-//       userId: payload.userId,
-//       email,
-//       isValidated: true,
-//       isUsed: false,
-//       expires: { gt: new Date() },
-//     },
-//   });
-
-//   if (!resetToken) {
-//     return { error: "Token no validado, ya utilizado o expirado" };
-//   }
-
-//   await prisma.user.update({
-//     where: { email },
-//     data: { password: await bcrypt.hash(newPassword, 12) },
-//   });
-
-//   await prisma.passwordResetToken.update({
-//     where: { id: resetToken.id },
-//     data: { isUsed: true, usedAt: new Date() },
-//   });
-
-//   return { success: true };
-// }
-
-// export async function updatePasswordById(
-//   userId: string,
-//   currentPassword: string,
-//   newPassword: string
-// ) {
-//   try {
-//     const user = await prisma.user.findUnique({
-//       where: { id: userId },
-//     });
-
-//     if (!user || !user.password) {
-//       return { success: false, error: "Usuario no encontrado" };
-//     }
-
-//     const isValid = await bcrypt.compare(currentPassword, user.password);
-//     if (!isValid) {
-//       return { success: false, error: "Contraseña actual incorrecta" };
-//     }
-
-//     const hashed = await bcrypt.hash(newPassword, 12);
-
-//     await prisma.user.update({
-//       where: { id: userId },
-//       data: { password: hashed },
-//     });
-    
-//     return { success: true };
-//   } catch (error) {
-//     console.error("Error updating password:", error);
-//     return { success: false, error: "Error del servidor" };
-//   }
-// }
+    return { success: true };
+  } catch (error) {
+    console.error("Error al actualizar contraseña:", error);
+    return { error: "Error de conexión al servidor." };
+  }
+}

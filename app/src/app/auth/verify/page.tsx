@@ -9,11 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  checkUserExists,
-  generateResetToken,
-  validateResetCode,
-} from "@/actions/auth";
+import { checkUserExists, generateResetTokene, validateResetCode } from "@/actions/auth";
 import { sendRecoveryEmail } from "@/actions/email-actions";
 
 function VerifyCodeContent() {
@@ -24,21 +20,6 @@ function VerifyCodeContent() {
   const [code, setCode] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [resendCooldown, setResendCooldown] = React.useState(0);
-
-  React.useEffect(() => {
-    const checkCooldown = async () => {
-      if (!email) return;
-      try {
-        const result = await generateResetToken(email, "", true);
-        if (result.cooldownRemaining && result.cooldownRemaining > 0) {
-          setResendCooldown(result.cooldownRemaining);
-        }
-      } catch (error) {
-        console.error("Error al verificar cooldown:", error);
-      }
-    };
-    checkCooldown();
-  }, [email]);
 
   React.useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -85,25 +66,24 @@ function VerifyCodeContent() {
     setIsLoading(true);
 
     try {
-      const user = await checkUserExists(email);
-      if ("error" in user) {
-        toast.error(user.error);
+      const result = await checkUserExists(email);
+
+      if (!result.success) {
+        toast.error(result.error);
         return;
       }
 
-      const resetData = await generateResetToken(email, user.id);
-      if ("error" in resetData || !resetData.code) {
-        toast.error("Error al generar el código de recuperación");
-        return;
-      }
+      // 2. Generar el Token (llama a la API de Go /request, que genera el código y el JWT inicial)
+      const resetData = await generateResetTokene(email);
 
+      // 3. Enviar el email (usando el código de 6 dígitos que vino de Go)
       await sendRecoveryEmail({
         email,
-        token: resetData.code as string, // ya está garantizado
-        name: user.name || "Usuario",
+        token: resetData.code,
+        name: resetData.name,
       });
 
-      toast.success("Nuevo código enviado a tu correo");
+      toast.success("¡Código enviado! Revisa tu correo");
       setResendCooldown(60);
     } catch {
       toast.error("Error al reenviar el código. Intenta nuevamente.");
@@ -113,7 +93,7 @@ function VerifyCodeContent() {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen w-full bg-background">
       {/* Sección izquierda: Formulario */}
       <div className="flex w-full lg:w-1/2 items-center justify-center p-6">
         <Card className="w-full max-w-md rounded-2xl border border-border bg-card shadow-md">
