@@ -109,3 +109,180 @@ time="2025-11-15T16:03:38-05:00" level=info msg="HTTP request" ip=127.0.0.1 late
 time="2025-11-15T16:04:36-05:00" level=info msg="📥 Create user request received"
 time="2025-11-15T16:04:36-05:00" level=info msg="✅ User created: employee@example.com"
 time="2025-11-15T16:04:36-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=69.8539ms method=POST path=/users/create status=200 userAgent=
+time="2025-11-15T16:24:24-05:00" level=error msg="Not Found" ip=127.0.0.1 latency=0s method=GET path=/users/list status=200 userAgent=insomnia/12.0.0
+time="2025-11-15T16:24:25-05:00" level=error msg="Not Found" ip=127.0.0.1 latency=0s method=GET path=/users/list status=200 userAgent=insomnia/12.0.0
+time="2025-11-15T16:24:36-05:00" level=error msg="Not Found" ip=127.0.0.1 latency=0s method=POST path=/users/list status=200 userAgent=insomnia/12.0.0
+time="2025-11-15T16:24:42-05:00" level=error msg="Not Found" ip=127.0.0.1 latency=0s method=GET path=/users/list status=200 userAgent=insomnia/12.0.0
+time="2025-11-15T16:24:43-05:00" level=error msg="Not Found" ip=127.0.0.1 latency=0s method=GET path=/users/list status=200 userAgent=insomnia/12.0.0
+time="2025-11-15T16:26:23-05:00" level=info msg="🚀 Iniciando servidor..."
+time="2025-11-15T16:26:23-05:00" level=info msg="📦 La base de datos inventario ya existe"
+time="2025-11-15T16:26:31-05:00" level=info msg="🗑️ Tablas eliminadas correctamente"
+time="2025-11-15T16:26:31-05:00" level=info msg="✅ Tablas migradas correctamente"
+time="2025-11-15T16:26:31-05:00" level=info msg="🌱 Ejecutando seeding inicial (usuario admin)..."
+time="2025-11-15T16:26:32-05:00" level=info msg="✅ Seeding completo ✅"
+time="2025-11-15T16:26:32-05:00" level=info msg="📋 Rutas registradas:"
+time="2025-11-15T16:26:32-05:00" level=info msg="  GET /"
+time="2025-11-15T16:26:32-05:00" level=info msg="  GET /health"
+time="2025-11-15T16:26:32-05:00" level=info msg="  GET /users/list"
+time="2025-11-15T16:26:32-05:00" level=info msg="  HEAD /"
+time="2025-11-15T16:26:32-05:00" level=info msg="  POST /"
+time="2025-11-15T16:26:32-05:00" level=info msg="  POST /auth/signin"
+time="2025-11-15T16:26:32-05:00" level=info msg="  POST /auth/password-reset/user-exists"
+time="2025-11-15T16:26:32-05:00" level=info msg="  POST /auth/password-reset/request"
+time="2025-11-15T16:26:32-05:00" level=info msg="  POST /auth/password-reset/validate"
+time="2025-11-15T16:26:32-05:00" level=info msg="  POST /auth/password-reset/confirm"
+time="2025-11-15T16:26:32-05:00" level=info msg="  POST /user/update-password"
+time="2025-11-15T16:26:32-05:00" level=info msg="  POST /users/create"
+time="2025-11-15T16:26:32-05:00" level=info msg="  PUT /"
+time="2025-11-15T16:26:32-05:00" level=info msg="  DELETE /"
+time="2025-11-15T16:26:32-05:00" level=info msg="  CONNECT /"
+time="2025-11-15T16:26:32-05:00" level=info msg="  OPTIONS /"
+time="2025-11-15T16:26:32-05:00" level=info msg="  TRACE /"
+time="2025-11-15T16:26:32-05:00" level=info msg="  PATCH /"
+time="2025-11-15T16:26:32-05:00" level=info msg="✅ Servidor escuchando en http://localhost:8080"
+time="2025-11-15T16:26:46-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:26:46-05:00" level=error msg="❌ Get users failed: usuario solicitante no encontrado"
+time="2025-11-15T16:26:46-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.5744ms method=GET path=/users/list status=400 userAgent=insomnia/12.0.0
+time="2025-11-15T16:26:59-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:26:59-05:00" level=info msg="✅ Users retrieved: 6 users"
+time="2025-11-15T16:26:59-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.1801ms method=GET path=/users/list status=200 userAgent=insomnia/12.0.0
+time="2025-11-15T16:27:19-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:27:19-05:00" level=error msg="❌ Get users failed: los empleados no tienen acceso a esta funcionalidad"
+time="2025-11-15T16:27:19-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="778.6µs" method=GET path=/users/list status=403 userAgent=insomnia/12.0.0
+time="2025-11-15T16:28:00-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:28:00-05:00" level=error msg="❌ Get users failed: los empleados no tienen acceso a esta funcionalidad"
+time="2025-11-15T16:28:00-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="503.2µs" method=GET path=/users/list status=403 userAgent=
+time="2025-11-15T16:28:07-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:28:07-05:00" level=info msg="✅ Users retrieved: 6 users"
+time="2025-11-15T16:28:07-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="502.5µs" method=GET path=/users/list status=200 userAgent=
+time="2025-11-15T16:28:13-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:28:13-05:00" level=info msg="✅ Users retrieved: 6 users"
+time="2025-11-15T16:28:13-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="506.7µs" method=GET path=/users/list status=200 userAgent=
+time="2025-11-15T16:28:20-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:28:20-05:00" level=info msg="✅ Users retrieved: 2 users"
+time="2025-11-15T16:28:20-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.0699ms method=GET path=/users/list status=200 userAgent=
+time="2025-11-15T16:31:12-05:00" level=info msg="🚀 Iniciando servidor..."
+time="2025-11-15T16:31:12-05:00" level=info msg="📦 La base de datos inventario ya existe"
+time="2025-11-15T16:31:43-05:00" level=info msg="🗑️ Tablas eliminadas correctamente"
+time="2025-11-15T16:31:43-05:00" level=info msg="✅ Tablas migradas correctamente"
+time="2025-11-15T16:31:43-05:00" level=info msg="🌱 Ejecutando seeding inicial (usuario admin)..."
+time="2025-11-15T16:31:43-05:00" level=info msg="✅ Seeding completo ✅"
+time="2025-11-15T16:31:43-05:00" level=info msg="📋 Rutas registradas:"
+time="2025-11-15T16:31:43-05:00" level=info msg="  GET /"
+time="2025-11-15T16:31:43-05:00" level=info msg="  GET /health"
+time="2025-11-15T16:31:43-05:00" level=info msg="  GET /users/list"
+time="2025-11-15T16:31:43-05:00" level=info msg="  HEAD /"
+time="2025-11-15T16:31:43-05:00" level=info msg="  POST /"
+time="2025-11-15T16:31:43-05:00" level=info msg="  POST /auth/signin"
+time="2025-11-15T16:31:43-05:00" level=info msg="  POST /auth/password-reset/user-exists"
+time="2025-11-15T16:31:43-05:00" level=info msg="  POST /auth/password-reset/request"
+time="2025-11-15T16:31:43-05:00" level=info msg="  POST /auth/password-reset/validate"
+time="2025-11-15T16:31:43-05:00" level=info msg="  POST /auth/password-reset/confirm"
+time="2025-11-15T16:31:43-05:00" level=info msg="  POST /user/update-password"
+time="2025-11-15T16:31:43-05:00" level=info msg="  POST /users/create"
+time="2025-11-15T16:31:43-05:00" level=info msg="  PUT /"
+time="2025-11-15T16:31:43-05:00" level=info msg="  DELETE /"
+time="2025-11-15T16:31:43-05:00" level=info msg="  CONNECT /"
+time="2025-11-15T16:31:43-05:00" level=info msg="  OPTIONS /"
+time="2025-11-15T16:31:43-05:00" level=info msg="  TRACE /"
+time="2025-11-15T16:31:43-05:00" level=info msg="  PATCH /"
+time="2025-11-15T16:31:43-05:00" level=info msg="✅ Servidor escuchando en http://localhost:8080"
+time="2025-11-15T16:33:19-05:00" level=info msg="📥 Create user request received"
+time="2025-11-15T16:33:19-05:00" level=info msg="✅ User created: employe1@example.com"
+time="2025-11-15T16:33:19-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=92.624ms method=POST path=/users/create status=200 userAgent=
+time="2025-11-15T16:33:35-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:33:35-05:00" level=info msg="✅ Users retrieved: 7 users"
+time="2025-11-15T16:33:35-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.0211ms method=GET path=/users/list status=200 userAgent=
+time="2025-11-15T16:34:02-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:34:02-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:34:02-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.236ms method=GET path=/users/list status=200 userAgent=
+time="2025-11-15T16:34:09-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:34:09-05:00" level=error msg="❌ Get users failed: los empleados no tienen acceso a esta funcionalidad"
+time="2025-11-15T16:34:09-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="506.1µs" method=GET path=/users/list status=403 userAgent=
+time="2025-11-15T16:46:14-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:46:14-05:00" level=error msg="❌ Get users failed: usuario solicitante no encontrado"
+time="2025-11-15T16:46:14-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.0195ms method=GET path=/users/list status=400 userAgent=node
+time="2025-11-15T16:46:14-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:46:14-05:00" level=error msg="❌ Get users failed: usuario solicitante no encontrado"
+time="2025-11-15T16:46:14-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="422.7µs" method=GET path=/users/list status=400 userAgent=node
+time="2025-11-15T16:46:26-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:46:26-05:00" level=error msg="❌ Get users failed: usuario solicitante no encontrado"
+time="2025-11-15T16:46:26-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.0314ms method=GET path=/users/list status=400 userAgent=node
+time="2025-11-15T16:46:26-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:46:26-05:00" level=error msg="❌ Get users failed: usuario solicitante no encontrado"
+time="2025-11-15T16:46:26-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="504µs" method=GET path=/users/list status=400 userAgent=node
+time="2025-11-15T16:47:38-05:00" level=info msg="📥 Signin request received"
+time="2025-11-15T16:47:38-05:00" level=info msg="📧 Email: manager.otic@inventario.com, Provider: credentials"
+time="2025-11-15T16:47:38-05:00" level=info msg="✅ Signin successful for manager.otic@inventario.com"
+time="2025-11-15T16:47:38-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=103.3802ms method=POST path=/auth/signin status=200 userAgent=node
+time="2025-11-15T16:47:40-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:47:40-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:47:40-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.2309ms method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:47:40-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:47:40-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:47:40-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.3534ms method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:47:52-05:00" level=info msg="📥 Signin request received"
+time="2025-11-15T16:47:52-05:00" level=info msg="📧 Email: kenedpalomino@gmail.com, Provider: google"
+time="2025-11-15T16:47:52-05:00" level=info msg="✅ Signin successful for kenedpalomino@gmail.com"
+time="2025-11-15T16:47:52-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=11.8127ms method=POST path=/auth/signin status=200 userAgent=node
+time="2025-11-15T16:47:55-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:47:55-05:00" level=info msg="✅ Users retrieved: 7 users"
+time="2025-11-15T16:47:55-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.0918ms method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:47:55-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:47:55-05:00" level=info msg="✅ Users retrieved: 7 users"
+time="2025-11-15T16:47:55-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.1806ms method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:54:31-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:54:31-05:00" level=info msg="✅ Users retrieved: 7 users"
+time="2025-11-15T16:54:31-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.029ms method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:55:00-05:00" level=info msg="📥 Create user request received"
+time="2025-11-15T16:55:00-05:00" level=info msg="✅ User created: aldahir.ubilluz.27@unsch.edu.pe"
+time="2025-11-15T16:55:00-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=68.8345ms method=POST path=/users/create status=200 userAgent=node
+time="2025-11-15T16:55:05-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:55:05-05:00" level=info msg="✅ Users retrieved: 8 users"
+time="2025-11-15T16:55:05-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.0214ms method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:55:53-05:00" level=info msg="📥 Signin request received"
+time="2025-11-15T16:55:53-05:00" level=info msg="📧 Email: aldahir.ubilluz.27@unsch.edu.pe, Provider: credentials"
+time="2025-11-15T16:55:53-05:00" level=info msg="✅ Signin successful for aldahir.ubilluz.27@unsch.edu.pe"
+time="2025-11-15T16:55:53-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=94.9953ms method=POST path=/auth/signin status=200 userAgent=node
+time="2025-11-15T16:56:03-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:56:03-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:56:03-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="739.1µs" method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:56:19-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:56:19-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:56:19-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.5475ms method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:56:21-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:56:21-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:56:21-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.0387ms method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:56:41-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:56:41-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:56:41-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="524.6µs" method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:56:48-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:56:48-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:56:48-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.1482ms method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:56:50-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:56:50-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:56:50-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="704.2µs" method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:56:51-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:56:51-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:56:51-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="504.2µs" method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:56:55-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:56:55-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:56:55-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="504.2µs" method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:56:55-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:56:55-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:56:55-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="699.5µs" method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:56:59-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:56:59-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:56:59-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="705.1µs" method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:57:44-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:57:44-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:57:44-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="702.8µs" method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:58:14-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:58:14-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:58:14-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.8171ms method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:58:39-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:58:39-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:58:39-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency=1.2359ms method=GET path=/users/list status=200 userAgent=node
+time="2025-11-15T16:58:39-05:00" level=info msg="📥 Get all users request received"
+time="2025-11-15T16:58:39-05:00" level=info msg="✅ Users retrieved: 1 users"
+time="2025-11-15T16:58:39-05:00" level=info msg="HTTP request" ip=127.0.0.1 latency="503.1µs" method=GET path=/users/list status=200 userAgent=node

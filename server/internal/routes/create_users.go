@@ -18,6 +18,7 @@ func RegisterUserManagementRoutes(app *fiber.App, db *gorm.DB) {
 	userGroup := app.Group("/users")
 	{
 		userGroup.Post("/create", httpwrap.Wrap(userManagementHandler.CreateUser))
+		userGroup.Get("/list", httpwrap.Wrap(userManagementHandler.GetAllUsers))
 	}
 
 	println("✅ User management routes registered: POST /users/create")

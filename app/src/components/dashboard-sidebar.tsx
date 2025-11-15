@@ -148,11 +148,10 @@ function SidebarNavContent({
                       asChild
                       isActive={isActive}
                       tooltip={isCollapsed ? item.name : undefined}
-                      className={`${
-                        isActive
+                      className={`${isActive
                           ? "bg-primary/10 text-primary"
                           : "hover:bg-muted/60"
-                      } rounded-lg px-4 py-5 transition-all duration-200`}
+                        } rounded-lg px-4 py-5 transition-all duration-200`}
                     >
                       <Link
                         href={item.href}
@@ -294,7 +293,7 @@ export default function DashboardSidebar({
       </Sheet>
 
       <main className="flex-1 overflow-y-auto p-6 lg:p-10 transition-all">
-        <div className="mx-auto max-w-7xl">{children}</div>
+        {children}
       </main>
     </div>
   );

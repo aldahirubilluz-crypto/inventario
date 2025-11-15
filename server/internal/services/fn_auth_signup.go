@@ -74,6 +74,8 @@ var (
 	ErrCreateUserRoleInvalid        = errors.New("role must be MANAGER or EMPLOYEE")
 	ErrCreateUserOfficeRequired     = errors.New("office is required")
 	ErrManagerCanOnlyCreateEmployee = errors.New("manager can only create employees")
+	ErrUnauthorizedAccess           = errors.New("no tienes permisos para acceder a esta información")
+	ErrEmployeeCannotList           = errors.New("los empleados no tienen acceso a esta funcionalidad")
 )
 
 func generateRandomPassword(length int) (string, error) {
@@ -159,4 +161,58 @@ func (s *UserManagementService) CreateUser(req dto.CreateUserRequest, createdByI
 		Phone:             user.Phone,
 		GeneratedPassword: &randomPassword,
 	}, nil
+}
+
+func (s *UserManagementService) GetAllUsers(requestedByID string) ([]dto.UserListResponse, error) {
+	var requester models.User
+	if err := s.db.Where("id = ?", requestedByID).First(&requester).Error; err != nil {
+		return nil, errors.New("usuario solicitante no encontrado")
+	}
+
+	var users []models.User
+	query := s.db.Where("is_active = ?", true)
+
+	switch requester.Rol {
+	case models.RolEmployee:
+		return nil, ErrEmployeeCannotList
+
+	case models.RolManager:
+		if requester.Office == nil {
+			return nil, errors.New("manager sin oficina asignada")
+		}
+		// Solo trae EMPLOYEES de su misma oficina, excluyéndose a sí mismo
+		query = query.Where("office = ? AND rol = ? AND id != ?", *requester.Office, models.RolEmployee, requestedByID)
+
+	case models.RolAdmin:
+		query = query.Where("rol IN (?, ?)", models.RolManager, models.RolEmployee)
+
+	default:
+		return nil, ErrUnauthorizedAccess
+	}
+
+	if err := query.Order("created_at DESC").Find(&users).Error; err != nil {
+		return nil, err
+	}
+
+	var response []dto.UserListResponse
+	for _, user := range users {
+		var officeStr *string
+		if user.Office != nil {
+			str := string(*user.Office)
+			officeStr = &str
+		}
+
+		response = append(response, dto.UserListResponse{
+			ID:        user.ID,
+			Name:      user.Name,
+			Email:     user.Email,
+			Role:      string(user.Rol),
+			Office:    officeStr,
+			Phone:     user.Phone,
+			IsActive:  user.IsActive,
+			CreatedAt: user.CreatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	return response, nil
 }

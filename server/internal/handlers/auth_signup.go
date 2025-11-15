@@ -69,3 +69,26 @@ func (h *UserManagementHandler) CreateUser(c fiber.Ctx) (interface{}, string, er
 	logger.Log.Infof("✅ User created: %s", user.Email)
 	return user, "Usuario creado exitosamente", nil
 }
+
+func (h *UserManagementHandler) GetAllUsers(c fiber.Ctx) (interface{}, string, error) {
+	logger.Log.Info("📥 Get all users request received")
+
+	requestedByID := c.Get("X-User-ID")
+	if requestedByID == "" {
+		return nil, "Usuario no autenticado", fiber.NewError(fiber.StatusUnauthorized, "Usuario no autenticado")
+	}
+
+	users, err := h.userManagementService.GetAllUsers(requestedByID)
+	if err != nil {
+		logger.Log.Errorf("❌ Get users failed: %v", err)
+
+		if err == services.ErrEmployeeCannotList {
+			return nil, err.Error(), fiber.NewError(fiber.StatusForbidden, err.Error())
+		}
+
+		return nil, err.Error(), fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	logger.Log.Infof("✅ Users retrieved: %d users", len(users))
+	return users, "Usuarios obtenidos exitosamente", nil
+}

@@ -202,3 +202,111 @@ ${appName} © ${new Date().getFullYear()}
     throw new Error("No se pudo enviar el correo de confirmación.");
   }
 }
+
+
+interface SendWelcomeEmailParams {
+  email: string;
+  name: string;
+  generatedPassword: string;
+  role: string;
+}
+
+export async function sendWelcomeEmail({
+  email,
+  name,
+  generatedPassword,
+  role,
+}: SendWelcomeEmailParams) {
+  const roleNames: Record<string, string> = {
+    MANAGER: "Manager",
+    EMPLOYEE: "Empleado",
+  };
+
+  const mailOptions = {
+    from: `"${appName}" <${process.env.FROM_EMAIL}>`,
+    to: email,
+    subject: `Bienvenido a ${appName}`,
+    html: `
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; padding: 40px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 14px; padding: 35px; border: 1px solid #e5e7eb; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+          
+          <h2 style="color: #111827; text-align: center; margin-bottom: 5px; font-size: 24px; font-weight: 700;">
+            ¡Bienvenido a ${appName}!
+          </h2>
+
+          <p style="color: #4b5563; text-align: center; margin-top: 0; margin-bottom: 25px; font-size: 15px;">
+            Hola <strong>${name}</strong>, tu cuenta ha sido creada exitosamente.
+          </p>
+
+          <div style="background-color: #f0f9ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 25px 0; border-radius: 8px;">
+            <p style="margin: 0 0 10px 0; color: #1e40af; font-weight: 600;">📧 Correo electrónico:</p>
+            <p style="margin: 0 0 20px 0; color: #1e3a8a; font-size: 16px;">${email}</p>
+
+            <p style="margin: 0 0 10px 0; color: #1e40af; font-weight: 600;">🔑 Contraseña temporal:</p>
+            <p style="margin: 0; background-color: #dbeafe; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 18px; color: #1e3a8a; text-align: center; letter-spacing: 2px;">
+              ${generatedPassword}
+            </p>
+          </div>
+
+          <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px 20px; margin: 25px 0; border-radius: 8px; color: #92400e;">
+            <strong>⚠️ Importante:</strong>
+            <ul style="margin: 10px 0 0 20px; padding: 0; font-size: 14px;">
+              <li>Esta es una contraseña temporal.</li>
+              <li>Te recomendamos cambiarla al iniciar sesión.</li>
+              <li>No compartas esta contraseña con nadie.</li>
+            </ul>
+          </div>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/auth/login" 
+               style="display: inline-block; background-color: #3b82f6; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 2px 8px rgba(59,130,246,0.3);">
+              Iniciar sesión
+            </a>
+          </div>
+
+          <hr style="margin: 35px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+          <p style="text-align: center; font-size: 13px; color: #9ca3af;">
+            Tu rol asignado: <strong>${roleNames[role] || role}</strong>
+            <br><br>
+            ¿Necesitas ayuda?  
+            <a href="mailto:${supportEmail}" style="color: #2563eb; text-decoration: none;">Contáctanos</a>
+            <br><br>
+            <span style="display: inline-block; margin-top: 5px;">
+              © ${new Date().getFullYear()} ${appName}. Todos los derechos reservados.
+            </span>
+          </p>
+
+        </div>
+      </div>
+    `,
+    text: `
+Bienvenido a ${appName}
+
+Hola ${name}, tu cuenta ha sido creada exitosamente.
+
+Correo: ${email}
+Contraseña temporal: ${generatedPassword}
+
+⚠️ Importante:
+- Esta es una contraseña temporal
+- Cámbiala al iniciar sesión
+- No la compartas con nadie
+
+Inicia sesión en: ${process.env.NEXT_PUBLIC_APP_URL}/auth/login
+
+Tu rol: ${roleNames[role] || role}
+
+Soporte: ${supportEmail}
+${appName} © ${new Date().getFullYear()}
+    `,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("❌ Error al enviar correo de bienvenida:", error);
+    throw new Error("No se pudo enviar el correo de bienvenida.");
+  }
+}

@@ -41,3 +41,18 @@ type CreateUserResponse struct {
 	Phone             *string `json:"phone"`
 	GeneratedPassword *string `json:"generatedPassword"`
 }
+
+type GetUsersRequest struct {
+	RequestedByID string `json:"requestedById"`
+}
+
+type UserListResponse struct {
+	ID     string  `json:"id"`
+	Name   *string `json:"name"`
+	Email  string  `json:"email"`
+	Role   string  `json:"role"`
+	Office *string `json:"office"`
+	Phone  *string `json:"phone"`
+	IsActive bool  `json:"isActive"`
+	CreatedAt string `json:"createdAt"`
+}
