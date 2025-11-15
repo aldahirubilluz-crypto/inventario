@@ -13,7 +13,7 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	})
 
 	RegisterAuthRoutes(app)
-
 	RegisterPasswordResetRoutes(app, db)
 	RegisterUserRoutes(app, db)
+	RegisterUserManagementRoutes(app, db)
 }

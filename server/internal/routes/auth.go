@@ -16,9 +16,7 @@ func RegisterAuthRoutes(app *fiber.App) {
 	authSvc := services.NewAuthService(config.DB, argon)
 	authH := handlers.NewAuthHandler(authSvc)
 
-	// ✅ Ahora SÍ funciona con httpwrap
 	app.Post("/auth/signin", httpwrap.Wrap(authH.Signin))
-	app.Post("/auth/signup", httpwrap.Wrap(authH.Signup))
 	
 	println("✅ Auth routes registered: POST /auth/signin, POST /auth/signup")
 }
